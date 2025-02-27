@@ -1,6 +1,6 @@
 "use client";
 
-import { shared } from '@srcbox/library';
+import { shared, shared_v2 } from '@srcbox/library';
 import React, { useState } from 'react'
 
 const Example = () =>
@@ -9,17 +9,18 @@ const Example = () =>
 
     const get_text = async () =>
     {
-        const response = await fetch("http://localhost:4000");
+        const url = process.env.NEXT_PUBLIC_API_BASE_HOST;
+        const response = await fetch(url!);
         const new_text = await response.text();
 
-        set_text(new_text);//
+        set_text(new_text);
         console.log("OK")
     }
 
     return (
         <div>
             <button onClick={get_text}>
-                {text} {shared()}
+                {text} {shared_v2()}
             </button>
 
         </div>

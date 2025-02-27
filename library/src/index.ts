@@ -1,4 +1,9 @@
 export const shared = () =>
 {
-    return "Shared Function";
+    return "Shared schmingus";
 };
+
+export const shared_v2 = () =>
+{
+    return "DINGLE"
+}
