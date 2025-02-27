@@ -1,0 +1,33 @@
+{
+    "name": "srcbox",
+    "version": "0.0.1",
+    "main": "index.js",
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "workspaces": [
+        "frontend",
+        "backend",
+        "library",
+        "tests"
+    ],
+    "private": true,
+    "scripts": {
+        "frontend-dev": "npm run dev --workspace=frontend",
+        "frontend-build": "npm run build --workspace=frontend",
+        "frontend-start": "npm run start --workspace=frontend",
+        "backend-dev": "npm run dev --workspace=backend",
+        "backend-build": "npm run build --workspace=backend",
+        "backend-start": "npm run start --workspace=backend",
+        "library-dev": "npm run dev --workspace=library",
+        "library-build": "npm run build --workspace=library",
+        "database-reset": "docker volume rm database_postgres_data",
+        "database-stop": "cd database && docker-compose down",
+        "database-start": "cd database && docker-compose up",
+        "test": "npm run test --workspace=tests",
+        "dev": "concurrently \"npm run frontend-dev\" \"npm run backend-dev\" \"npm run library-dev\" \"npm run database-start\""
+    },
+    "devDependencies": {
+        "concurrently": "^9.1.2"
+    }
+}

@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  db:
+    image: postgres
+    container_name: postgres-database
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: database
+    ports:
+      - "5444:5432" # Maps the port of the database to 5444 on the host
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d
+volumes:
+  postgres_data:
