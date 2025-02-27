@@ -1,6 +1,7 @@
 {
     "watch": [
-        "src"
+        "src",
+        "../library/dist"
     ],
     "ext": "ts,json",
     "ignore": [
