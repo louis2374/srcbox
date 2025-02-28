@@ -17,10 +17,10 @@ validate_environment();
 
 import express from 'express';
 import cors from 'cors';
-import { shared } from '@srcbox/library';
-import { db_query } from './database/connection';
+import { db_get_user_from_id } from './database/interface/user';
 
-/*
+
+
 const server = express();
 
 // For dev as its easier, later this should be removed later
@@ -29,14 +29,12 @@ server.use(cors());
 // Testing func for now
 server.get("/", async (req, res) =>
 {
-    const response = await db_query("SELECT 123");
-    res.send(response.rows[0]);
+    const user = await db_get_user_from_id(16);
+    res.send(user || "NO USER");
 })//
 //
 
-server.listen(4000, () =>
+server.listen(process.env.PORT || 4000, () =>
 {
-    console.log("Listening on port 4000");
-});*/
-
-db_query("SELECT 1").then(console.log).catch(console.log);
+    console.log("Listening on port", process.env.PORT || 4000);
+});

@@ -14,16 +14,14 @@ const Example = () =>
         const new_text = await response.text();
 
         set_text(new_text);
-        console.log("OK")
     }
 
     return (
-        <div>
-            <button onClick={get_text}>
-                {text} {shared_v2()}
-            </button>
-
-        </div>
+        <button
+            className='p-4 bg-slate-500'
+            onClick={get_text}>
+            {text}
+        </button>
     )
 }
 

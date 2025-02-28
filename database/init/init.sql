@@ -1,9 +1,36 @@
-/* Example init script */
-
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
-    email VARCHAR(100) NOT NULL
+CREATE TABLE tbl_users (
+    user_id SERIAL PRIMARY KEY,
+    user_name VARCHAR(32) NOT NULL,
+    user_email VARCHAR(128) NOT NULL,
+    user_password VARCHAR(64) NOT NULL,
+    user_verified BOOLEAN NOT NULL
 );
 
-INSERT INTO users (username, email) VALUES ('admin', 'admin@example.com');
+CREATE TABLE tbl_posts (
+    post_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    post_file_id VARCHAR(32) NULL,
+    post_title VARCHAR(96) NOT NULL,
+    post_description VARCHAR(256) NOT NULL
+);
+
+CREATE TABLE tbl_comments (
+    comment_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    post_id INT NOT NULL,
+    comment_text VARCHAR(512) NOT NULL
+);
+
+CREATE TABLE tbl_likes (
+    user_id INT NOT NULL,
+    post_id INT NOT NULL,
+
+    PRIMARY KEY(user_id, post_id)
+);
+
+CREATE TABLE tbl_follows (
+    user_id INT NOT NULL,
+    user_id_followed INT NOT NULL,
+
+    PRIMARY KEY(user_id, user_id_followed)
+);

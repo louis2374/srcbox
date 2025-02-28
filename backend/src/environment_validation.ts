@@ -4,7 +4,8 @@ const required_env_vars =
         "DATABASE_PASSWORD",
         "DATABASE_HOST",
         "DATABASE_PORT",
-        "DATABASE_NAME"
+        "DATABASE_NAME",
+        "PORT"
     ];
 
 export const validate_environment = () =>

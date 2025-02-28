@@ -1,9 +1,9 @@
 import { shared } from "@srcbox/library";
 import Image from "next/image";
-import Example from "./Example";
+import ExampleQ from "./ExampleQ";
 export default function Home()
 {
     return (
-        <>Home</>
+        <ExampleQ />
     );
 }

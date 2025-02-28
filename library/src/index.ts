@@ -1,3 +1,5 @@
+export * from "./typing/database_types";
+
 export const shared = () =>
 {
     return "Shared schmingus";
