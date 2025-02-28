@@ -3,11 +3,11 @@
 import dotenv from 'dotenv';
 if (process.env.NODE_ENV !== 'production')
 {
-    const loaded_env = dotenv.config();
+    const loaded_env = dotenv.config({ path: "./backend/.env" });
     // Failed to load env in dev mode
     if (loaded_env.error)
     {
-        console.error("Could not load .env file");
+        console.error("Could not load .env file", loaded_env.error);
         process.exit(1);
     }
 };
@@ -20,6 +20,7 @@ import cors from 'cors';
 import { shared } from '@srcbox/library';
 import { db_query } from './database/connection';
 
+/*
 const server = express();
 
 // For dev as its easier, later this should be removed later
@@ -36,4 +37,6 @@ server.get("/", async (req, res) =>
 server.listen(4000, () =>
 {
     console.log("Listening on port 4000");
-});
+});*/
+
+db_query("SELECT 1").then(console.log).catch(console.log);
