@@ -3,7 +3,7 @@
 import dotenv from 'dotenv';
 if (process.env.NODE_ENV !== 'production')
 {
-    const loaded_env = dotenv.config({ path: "./backend/.env" });
+    const loaded_env = dotenv.config();
     // Failed to load env in dev mode
     if (loaded_env.error)
     {
