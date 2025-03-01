@@ -1,13 +1,14 @@
-import { Http } from "@srcbox/library";
+import { Http, STDAPIErrors } from "@srcbox/library";
 import { Response } from "express";
 
-export const response = (p_res: Response, p_data: Record<string, any>, p_status: Http) =>
+export const std_response = (p_res: Response, p_data: Record<string, any>, p_status: Http) =>
 {
+    console.log({ p_status, p_data })
     p_res.status(p_status).json(p_data);
 }
 
-export const response_error = (p_res: Response, p_error: string | Record<string, unknown>, p_status: Http) =>
+export const std_response_error = (p_res: Response, p_error: string | Record<string, unknown>, p_code: STDAPIErrors, p_status: Http) =>
 {
 
-    p_res.status(p_status).json({ error: p_error });
+    p_res.status(p_status).json({ error: p_error, code: p_code });
 }

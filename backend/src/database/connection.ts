@@ -1,6 +1,7 @@
 import { Pool } from "pg";
 import knex from "knex"
 
+// Loads knex and connects db
 const knex_config = {
     client: 'pg',
     connection: {

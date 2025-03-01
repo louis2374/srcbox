@@ -52,7 +52,7 @@ const generate_endpoint_report = (p_endpoint: RouteLoadData): string =>
     let str: string = ConsoleColor.FgGreen;
 
     // Method
-    str += ConsoleColor.FgGreen + " - " + p_endpoint.method + "\n";
+    str += ConsoleColor.FgGreen + " - " + p_endpoint.method + ConsoleColor.Reset + "\n";
 
     // Summary
     if (p_endpoint.summary) str += NL + p_endpoint.summary + "\n";
@@ -74,7 +74,7 @@ const generate_endpoint_report = (p_endpoint: RouteLoadData): string =>
         }
         if (params.body)
         {
-            str += NL + "URL\n"
+            str += NL + "Body\n"
             params.body.forEach(p =>
             {
                 str += NL + "- Name: " + p.name + ", Type: " + p.type + ", Required: " + p.required + "\n";
@@ -82,7 +82,7 @@ const generate_endpoint_report = (p_endpoint: RouteLoadData): string =>
         }
         if (params.path)
         {
-            str += NL + "URL\n"
+            str += NL + "Path\n"
             params.path.forEach(p =>
             {
                 str += NL + "- Name: " + p.name + ", Type: " + p.type + ", Required: " + p.required + "\n";

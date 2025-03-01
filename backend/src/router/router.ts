@@ -3,19 +3,16 @@ import { get_all_files } from "./files";
 import { DocRoute, DocRouteFile, RouteLoadData } from "./route_types";
 import { Application, Request, Response } from "express";
 import { check_params_valid, construct_params } from "./route_params";
-import { Http, is_ts_node, Method } from "@srcbox/library";
+import { Http, is_ts_node, Method, STDAPIErrors } from "@srcbox/library";
 import { generate_preprocess_error } from "./router_preprocess_error";
-import { response_error } from "./standard_response";
+import { std_response_error } from "./standard_response";
 import { ConsoleColor, count_chars } from "@srcbox/library/src";
 import { generate_router_load_report } from "./router_logging";
 
-const ROUTE_PATH = process.env.NODE_ENV === "production"
-    ?
-    path.join(__dirname, "..", "routes")
-    :
-    path.join(__dirname, "..", "routes");
+// Root of all endpoints
+const ROUTE_PATH = path.join(__dirname, "..", "routes");
 
-// Files will be either ts or js
+// Files will be either ts or js, depending on how this is run
 const ROUTE_ENDING = is_ts_node() ? ".ts" : ".js";
 
 export const parse_routes = async (p_server: Application) =>
@@ -120,7 +117,7 @@ const assign_route = (p_route: DocRoute, p_server: Application) =>
             {
                 // Generate error and send it
                 const error = generate_preprocess_error(param_check);
-                response_error(res, error, Http.BAD_REQUEST);
+                std_response_error(res, error, STDAPIErrors.BAD_PARAMS, Http.BAD_REQUEST);
             }
             return;
         }

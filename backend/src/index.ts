@@ -5,18 +5,24 @@ validate_environment();
 // Usual imports
 import express from 'express';
 import cors from 'cors';
-import { db_get_user_from_id } from './database/interface/user';
 import { parse_routes } from './router/router';
 
-//  Create server
+const port = process.env.PORT || 4000;
+
+// Create server
 const server = express();
 
-// For dev as its easier, later this should be removed later
+// For dev as its easier, later this should be removed
 server.use(cors());
 
-server.listen(process.env.PORT || 4000, () =>
-{
-    console.log("Listening on port", process.env.PORT || 4000);
-});
+// Parse bodies into json
+server.use(express.json());
 
+// Load api endpoints
 parse_routes(server);
+
+// Start the server
+server.listen(port, () =>
+{
+    console.log("Listening on port", port);
+});

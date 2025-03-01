@@ -7,7 +7,8 @@ const required_env_vars =
         "DATABASE_HOST",
         "DATABASE_PORT",
         "DATABASE_NAME",
-        "PORT"
+        "PORT",
+        "JSONWEBTOKEN_SECRET"
     ];
 
 const validate_envs = () =>
