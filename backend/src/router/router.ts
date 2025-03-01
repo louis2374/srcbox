@@ -1,11 +1,13 @@
 import path from "path"
 import { get_all_files } from "./files";
-import { DocRoute, DocRouteFile } from "./route_types";
+import { DocRoute, DocRouteFile, RouteLoadData } from "./route_types";
 import { Application, Request, Response } from "express";
 import { check_params_valid, construct_params } from "./route_params";
 import { Http, is_ts_node, Method } from "@srcbox/library";
 import { generate_preprocess_error } from "./router_preprocess_error";
 import { response_error } from "./standard_response";
+import { ConsoleColor, count_chars } from "@srcbox/library/src";
+import { generate_router_load_report } from "./router_logging";
 
 const ROUTE_PATH = process.env.NODE_ENV === "production"
     ?
@@ -19,8 +21,7 @@ const ROUTE_ENDING = is_ts_node() ? ".ts" : ".js";
 export const parse_routes = async (p_server: Application) =>
 {
     // Routes than failed or succeeded to load, for logging
-    const loaded_routes: Array<DocRoute> = [];
-    const unloaded_routes: Array<{ route: string, error: string }> = [];
+    const all_routes: Array<RouteLoadData> = [];
 
     const files = get_all_files(ROUTE_PATH);
     await Promise.all(files.map(async file =>
@@ -32,9 +33,9 @@ export const parse_routes = async (p_server: Application) =>
         const path_data = extract_path_data(file);
 
         // Invalid method, as path cannot fail
-        if (!path_data)
+        if (!is_valid_path_data(path_data))
         {
-            unloaded_routes.push({ route: file, error: `File name is an invalid HTTP method.` });
+            all_routes.push({ path: path_data.path, method: path_data.method, error: `File name is an invalid HTTP method.` });
             return;
         }
 
@@ -55,15 +56,15 @@ export const parse_routes = async (p_server: Application) =>
         assign_route(route, p_server);
 
         // Add to complete routes for logging
-        loaded_routes.push(route);
+        all_routes.push(route);
     }));
 
     // Log the report
 
-    console.log(generate_route_report(loaded_routes, unloaded_routes));
+    console.log(generate_router_load_report(all_routes));
 }
 
-const extract_path_data = (p_file_name: string): { path: string, method: Method } | undefined =>
+const extract_path_data = (p_file_name: string): { path: string, method: string } =>
 {
     // Get path relative to . of the route file
     const relative = path.relative(ROUTE_PATH, p_file_name).normalize().replace(/\\+/g, "/");
@@ -71,10 +72,13 @@ const extract_path_data = (p_file_name: string): { path: string, method: Method 
     const route_path = route_rel_path === "." ? "/" : "/" + route_rel_path;
     const route_method = path.basename(relative).split(".")[0];
 
-    // Invalid file name
-    if (!(route_method in Method)) return undefined;
+    return { path: route_path, method: route_method };
+}
 
-    return { path: route_path, method: route_method as Method };
+// Typeguard for ensuring its valid
+const is_valid_path_data = (p_data: { path: string, method: string }): p_data is { path: string, method: Method } =>
+{
+    return p_data.method in Method;
 }
 
 const assign_route = (p_route: DocRoute, p_server: Application) =>
@@ -125,15 +129,4 @@ const assign_route = (p_route: DocRoute, p_server: Application) =>
         const params = construct_params(p_route.parameters, req);
         p_route.handler(req, res, params);
     })
-}
-
-// Stringified report of loaded and unloaded routes with errors
-const generate_route_report = (p_loaded: Array<DocRoute>, p_unloaded: Array<{ route: string, error: string }>): string =>
-{
-    let out = "";
-    p_loaded.forEach(route =>
-    {
-        out += route.path + " " + route.method + "\n";
-    })
-    return out;
 }

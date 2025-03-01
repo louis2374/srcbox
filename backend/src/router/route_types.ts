@@ -69,7 +69,9 @@ export type HandlerFunctionParams = {
     body?: Record<string, PrimTS>
 }
 
-// Allows me to ensure type saftey when defining the function
+// Allows me to ensure type saftey when defining the functions
 export type HandlerFunction<T extends HandlerFunctionParams> = (p_request: Request, p_response: Response, p_params: T) => void;
-
 export type BadRequestHandlerFunction = (p_request: Request, p_response: Response, p_error: string) => void;
+
+// Stores info about a root during the loading process
+export type RouteLoadData = Partial<Omit<DocRoute, "method">> & { error?: string, method: string | Method };
