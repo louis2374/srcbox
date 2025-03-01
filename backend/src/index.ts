@@ -1,40 +1,22 @@
-// Load .env if development
 // This is first so anything that uses these has access
-import dotenv from 'dotenv';
-if (process.env.NODE_ENV !== 'production')
-{
-    const loaded_env = dotenv.config();
-    // Failed to load env in dev mode
-    if (loaded_env.error)
-    {
-        console.error("Could not load .env file", loaded_env.error);
-        process.exit(1);
-    }
-};
 import { validate_environment } from './environment_validation';
-// Ensure all vars exist
 validate_environment();
 
+// Usual imports
 import express from 'express';
 import cors from 'cors';
 import { db_get_user_from_id } from './database/interface/user';
+import { parse_routes } from './router/router';
 
-
-
+//  Create server
 const server = express();
 
 // For dev as its easier, later this should be removed later
 server.use(cors());
 
-// Testing func for now
-server.get("/", async (req, res) =>
-{
-    const user = await db_get_user_from_id(16);
-    res.send(user || "NO USER");
-})//
-//
-
 server.listen(process.env.PORT || 4000, () =>
 {
     console.log("Listening on port", process.env.PORT || 4000);
 });
+
+parse_routes(server);

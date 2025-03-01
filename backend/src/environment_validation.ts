@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+
 const required_env_vars =
     [
         "DATABASE_USER",
@@ -8,7 +10,7 @@ const required_env_vars =
         "PORT"
     ];
 
-export const validate_environment = () =>
+const validate_envs = () =>
 {
     required_env_vars.forEach(env_name =>
     {
@@ -19,4 +21,23 @@ export const validate_environment = () =>
         // Close app
         process.exit(1);
     });
+}
+
+export const validate_environment = () =>
+{
+    // Only matters in dev (purely loading the .env)
+    if (process.env.NODE_ENV !== 'production')
+    {
+        const loaded_env = dotenv.config();
+
+        // Failed to load env in dev mode
+        if (loaded_env.error)
+        {
+            console.error("Could not load .env file", loaded_env.error);
+            process.exit(1);
+        }
+    };
+
+    // Check all required envs exist
+    validate_envs();
 }
