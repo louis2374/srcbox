@@ -1,4 +1,4 @@
-import { docroute } from "../../router/route_builder";
+import { docroute } from "../../../router/route_builder";
 
 export default docroute()
     .summary("Example endpoint")

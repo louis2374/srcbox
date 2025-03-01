@@ -1,7 +1,7 @@
 import { Request } from "express";
 import { DocRouteParams, HandlerFunctionParams, Prim, PrimTS } from "./route_types";
 
-interface ValidationData
+export interface ValidationData
 {
     missing:
     {
@@ -50,6 +50,8 @@ const is = (p_test: any, p_type: Prim): PrimTS | undefined =>
         default:
             return false;
     }
+
+    return false;
 }
 
 // Returns a list of missing and invalid params

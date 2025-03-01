@@ -5,11 +5,7 @@ export enum Method
     POST = "POST",
     PUT = "PUT",
     DELETE = "DELETE",
-    PATCH = "PATCH",
-    HEAD = "HEAD",
-    OPTIONS = "OPTIONS",
-    CONNECT = "CONNECT",
-    TRACE = "TRACE"
+    PATCH = "PATCH"
 }
 
 // Just going to add these as I need them
