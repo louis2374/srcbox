@@ -3,7 +3,7 @@ import { get_all_files } from "./files";
 import { DocRoute, DocRouteFile, HandlerFunction, HandlerFunctionAuth, RouteLoadData } from "./route_types";
 import { Application, Handler, Request, Response } from "express";
 import { check_params_valid, construct_params, params_validator_run } from "./route_params";
-import { Http, is_ts_node, Method, StdAPIErrors } from "@srcbox/library";
+import { DB_User, Http, is_ts_node, Method, StdAPIErrors } from "@srcbox/library";
 import { generate_preprocess_error } from "./router_preprocess_error";
 import { std_response_error } from "./standard_response";
 import { ConsoleColor, count_chars } from "@srcbox/library/src";
@@ -99,11 +99,11 @@ const assign_route = (p_route: DocRoute, p_server: Application) =>
         // This is run every call to the route
 
         // If an authoriser is set, call it first
-        let auth_user: number | undefined = undefined;
+        let auth_user: DB_User | undefined = undefined;
         if (p_route.authoriser)
         {
             auth_user = await p_route.authoriser(req.headers);
-            if (auth_user == undefined || auth_user < 1)
+            if (!auth_user?.user_id)
             {
                 std_response_error(res, "unauthorised", StdAPIErrors.UNAUTHORIZED, Http.UNAUTHORIZED)
                 return;
@@ -113,7 +113,10 @@ const assign_route = (p_route: DocRoute, p_server: Application) =>
         // If no params, call the hander immediately
         if (!p_route.parameters)
         {
-            (p_route.handler as HandlerFunctionAuth<{}>)(req, res, {}, auth_user as number);
+            // I can assert auth_user here, as if this function does not use authoriser
+            // it will not access user, and if it does it will be undefined, which is correct
+            // for non-auth handlers
+            (p_route.handler as HandlerFunctionAuth<{}>)(req, res, {}, auth_user!);
             return;
         }
 
@@ -147,7 +150,7 @@ const assign_route = (p_route: DocRoute, p_server: Application) =>
 
         // A little type unsafe, however so long as
         // the endpoint is setup properly, it will be ok
-        (p_route.handler as HandlerFunctionAuth<{}>)(req, res, params, auth_user as number);
+        (p_route.handler as HandlerFunctionAuth<{}>)(req, res, params, auth_user!);
     })
 }
 

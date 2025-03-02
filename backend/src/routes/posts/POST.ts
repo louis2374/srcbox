@@ -31,7 +31,7 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { body: { title, d
         post_title: title,
         post_description: description,
         post_file_id: file_id,
-        user_id: p_user
+        user_id: p_user.user_id
     };
 
     // Add it to the db

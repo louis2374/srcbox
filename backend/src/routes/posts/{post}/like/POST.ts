@@ -19,7 +19,7 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }
 {
     const like: DB_Like =
     {
-        user_id: p_user,
+        user_id: p_user.user_id,
         post_id: post
     };
 

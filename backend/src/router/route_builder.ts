@@ -1,4 +1,4 @@
-import { ContentType, Http } from "@srcbox/library";
+import { ContentType, DB_User, Http } from "@srcbox/library";
 import { BadRequestHandlerFunction, ContentFormat, DocParam, DocResponse, DocRoute, DocRouteFile, EndpointAuthorizer, GenericHandler, HandlerFunction, HandlerFunctionAuth, HandlerFunctionParams, ParamValidatorFuncion, Prim, PrimTS } from "./route_types";
 
 // Used for building a route
@@ -94,7 +94,7 @@ class DocRouteBuilder
         return this;
     }
 
-    authoriser = (p_authoriser: EndpointAuthorizer) =>
+    authoriser = (p_authoriser: EndpointAuthorizer<DB_User>) =>
     {
         this.route.authoriser = p_authoriser;
         return this;

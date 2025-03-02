@@ -25,23 +25,19 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }
         post_id: post
     }
 
-    db_con("tbl_posts").select("*").where(post_find).first<DB_Post | undefined>()
-        .then((retrieved_post) =>
+    db_con("tbl_posts").where(post_find).delete()
+        .then(() =>
         {
-            if (retrieved_post) std_response(res, retrieved_post, Http.OK);
-
-            // I put an error here, instead of not found bc this should only happen on the very rare
-            // occasion, and I want to know when it does
-            else std_response_error(res, "encountered an error retrieving post", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR);
+            std_response(res, {}, Http.OK);
         })
         .catch(() =>
         {
-            std_response_error(res, "encountered an error retrieving post", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR);
+            std_response_error(res, "encountered an error deleting post", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR);
         });
 };
 
 export default docroute()
-    .summary("Get an existing post via id")
+    .summary("Delete a post")
     .parameter("path", "post", "number", true, param_validator_post)
     .handler(handler)
     .authoriser(route_jwt_authoriser)

@@ -23,7 +23,7 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post }, 
 {
     const comment: Partial<DB_Comment> =
     {
-        user_id: p_user,
+        user_id: p_user.user_id,
         post_id: post,
         comment_text: text
     };
