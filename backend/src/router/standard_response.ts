@@ -3,7 +3,6 @@ import { Response } from "express";
 
 export const std_response = (p_res: Response, p_data: Record<string, any>, p_status: Http) =>
 {
-    console.log({ p_status, p_data })
     p_res.status(p_status).json(p_data);
 }
 

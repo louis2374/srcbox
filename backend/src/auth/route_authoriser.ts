@@ -8,7 +8,7 @@ export const route_jwt_authoriser: EndpointAuthorizer = async (p_req: Record<str
     const raw_token = p_req.authorization as string;
 
     // No auth provided
-    if (!raw_token) return undefined;
+    if (!raw_token || !raw_token.startsWith("Bearer ")) return undefined;
 
     // Remove bearer
     const token = raw_token.replace("Bearer ", "");

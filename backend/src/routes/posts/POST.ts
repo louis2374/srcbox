@@ -1,4 +1,4 @@
-import { Http, StdAPIErrors } from "@srcbox/library";
+import { DB_Post, Http, StdAPIErrors } from "@srcbox/library";
 import { db_get_user_by_email } from "../../database/interface/user";
 import { docroute } from "../../router/route_builder";
 import { HandlerFunction, HandlerFunctionAuth } from "../../router/route_types";
@@ -7,6 +7,7 @@ import { password_check } from "../../auth/password";
 import { jwt_create_login_token } from "../../auth/jwt";
 import { route_jwt_authoriser } from "../../auth/route_authoriser";
 import { db_con } from "../../database/connection";
+import { post_create_upload_url, post_remove_upload_url } from "../../post_storage/storage";
 
 interface Params
 {
@@ -17,18 +18,35 @@ interface Params
     }
 }
 
-const handler: HandlerFunctionAuth<Params> = async (req, res, { body: { title, description } }, user) =>
+const handler: HandlerFunctionAuth<Params> = async (req, res, { body: { title, description } }, p_user) =>
 {
-    const post =
+    // I create the upload URL first.
+    // Posts should not fail to create, as there
+    // will be no unique constraints ect ect
+    const file_id = post_create_upload_url();
+
+    // Post to be inserted into db
+    const post: Partial<DB_Post> =
     {
         post_title: title,
-        post_description: description
-    }
+        post_description: description,
+        post_file_id: file_id,
+        user_id: p_user
+    };
 
-    db_con("tbl_posts").insert(post).returning<[{ post_id: number }]>("post_id").then(id =>
-    {
-        //  db_con("tbl_posts").update("post_file_id").
-    })
+    // Add it to the db
+    db_con("tbl_posts").insert(post).returning<[{ post_id: number }]>("post_id")
+        .then(([{ post_id }]) =>
+        {
+            std_response(res, { post_id, file_upload_url: file_id }, Http.CREATED);
+        })
+        .catch(() =>
+        {
+            std_response_error(res, "failed to create post", StdAPIErrors.POST_CREATION_FAILED, Http.INTERNAL_SERVER_ERROR);
+
+            // Remove the upload URL as the post failed
+            post_remove_upload_url(file_id);
+        });
 };
 
 export default docroute()

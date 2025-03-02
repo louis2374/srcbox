@@ -36,6 +36,8 @@ export const parse_routes = async (p_server: Application) =>
             return;
         }
 
+
+
         // Load the file
         const docroutefile = (await import(file)).default as DocRouteFile;
 
@@ -92,7 +94,7 @@ const assign_route = (p_route: DocRoute, p_server: Application) =>
     };
 
     // Assign the valid route
-    method_function_map[p_route.method](p_route.path, async (req: Request, res: Response) =>
+    method_function_map[p_route.method](process_path_params_for_express(p_route.path), async (req: Request, res: Response) =>
     {
         // This is run every call to the route
 
@@ -142,4 +144,11 @@ const assign_route = (p_route: DocRoute, p_server: Application) =>
         // the endpoint is setup, it should be ok
         (p_route.handler as HandlerFunctionAuth<{}>)(req, res, params, auth_user as number);
     })
+}
+
+const process_path_params_for_express = (p_path: string) =>
+{
+    // This just replaces {anything} with :anything, as thats
+    // how express likes path params
+    return p_path.replace(/\{([^}]+)\}/g, (_, param) => ":" + param);
 }
