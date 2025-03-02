@@ -4,6 +4,7 @@ import { HandlerFunctionAuth } from "../../../../router/route_types";
 import { std_response, std_response_error } from "../../../../router/standard_response";
 import { route_jwt_authoriser } from "../../../../auth/route_authoriser";
 import { db_con } from "../../../../database/connection";
+import { post_exists } from "../../../../database/interface/post";
 
 interface Params
 {
@@ -18,7 +19,7 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }
     // Check if the post exists
     try
     {
-        const exists = (await db_con("tbl_posts").where({ post_id: post }).select("*")).length;
+        const exists = await post_exists(post);
 
         if (!exists)
         {

@@ -1,4 +1,4 @@
-import { DB_Like, Http, StdAPIErrors } from "@srcbox/library";
+import { DB_Comment, DB_Like, Http, StdAPIErrors } from "@srcbox/library";
 import { docroute } from "../../../../router/route_builder";
 import { HandlerFunctionAuth } from "../../../../router/route_types";
 import { std_response, std_response_error } from "../../../../router/standard_response";
@@ -11,10 +11,14 @@ interface Params
     path:
     {
         post: number,
+    },
+    body:
+    {
+        text: string
     }
 }
 
-const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }, p_user) =>
+const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post }, body: { text } }, p_user) =>
 {
     // Check if the post exists
     try
@@ -33,16 +37,17 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }
         return;
     }
 
-    const like: DB_Like =
+    const comment: Partial<DB_Comment> =
     {
         user_id: p_user,
-        post_id: post
+        post_id: post,
+        comment_text: text
     };
 
-    db_con("tbl_likes").insert(like).onConflict().ignore()
-        .then(() =>
+    db_con("tbl_comments").insert(comment).returning<[{ comment_id: number }]>("comment_id")
+        .then(([{ comment_id }]) =>
         {
-            std_response(res, {}, Http.OK);
+            std_response(res, { comment_id }, Http.OK);
         })
         .catch((e) =>
         {
@@ -51,8 +56,9 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }
 };
 
 export default docroute()
-    .summary("Add a like to a post")
+    .summary("Add a comment to a post")
     .parameter("path", "post", "number", true)
+    .parameter("body", "text", "string", true, "The text content of the comment")
     .handler(handler)
     .authoriser(route_jwt_authoriser)
     .build();
