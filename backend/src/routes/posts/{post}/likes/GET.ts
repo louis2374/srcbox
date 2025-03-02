@@ -15,11 +15,37 @@ interface Params
 
 const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }, p_user) =>
 {
-    std_response(res, {}, Http.OK);
+    console.log("HI")
+    // Check if the post exists
+    try
+    {
+        const exists = (await db_con("tbl_posts").where({ post_id: post }).select("*")).length;
+
+        if (!exists)
+        {
+            std_response_error(res, "post does not exist", StdAPIErrors.POST_NOT_FOUND, Http.NOT_FOUND)
+            return;
+        }
+    }
+    catch (e)
+    {
+        std_response_error(res, "failed to retrieve post", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR)
+        return;
+    }
+
+    db_con("tbl_posts").where({ post_id: post }).count<[{ count: number }]>("*")
+        .then(([{ count }]) =>
+        {
+            std_response(res, { likes: count }, Http.OK);
+        })
+        .catch(() =>
+        {
+            std_response_error(res, "failed to count likes", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR);
+        })
 };
 
 export default docroute()
-    .summary("Add a like to a post")
+    .summary("Get the number of likes a post has")
     .parameter("path", "post", "number", true)
     .handler(handler)
     .authoriser(route_jwt_authoriser)

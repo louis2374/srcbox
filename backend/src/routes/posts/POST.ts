@@ -42,7 +42,7 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { body: { title, d
         })
         .catch(() =>
         {
-            std_response_error(res, "failed to create post", StdAPIErrors.POST_CREATION_FAILED, Http.INTERNAL_SERVER_ERROR);
+            std_response_error(res, "failed to create post", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR);
 
             // Remove the upload URL as the post failed
             post_remove_upload_url(file_id);
