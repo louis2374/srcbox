@@ -41,7 +41,7 @@ const handler: HandlerFunction<Params> = async (req, res, { body: { username, em
     }
 
     // Construct user obj, without id
-    const user: Omit<DB_User, "user_id"> =
+    const user: Omit<DB_User, "user_id" | "user_version"> =
     {
         user_email: email,
         user_name: username,

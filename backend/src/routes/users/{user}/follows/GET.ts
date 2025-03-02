@@ -6,37 +6,32 @@ import { route_jwt_authoriser } from "../../../../auth/route_authoriser";
 import { db_con } from "../../../../database/connection";
 import { post_exists } from "../../../../database/interface/post";
 import { param_validator_post } from "../../../../route_validators/post";
+import { param_validator_user } from "../../../../route_validators/user";
 
 interface Params
 {
     path:
     {
-        post: number,
+        user: number,
     }
 }
 
-const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }, p_user) =>
+const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { user } }, p_user) =>
 {
-    const like: DB_Like =
-    {
-        user_id: p_user.user_id,
-        post_id: post
-    };
-
-    db_con("tbl_likes").where(like).delete()
-        .then(() =>
+    db_con("tbl_follows").where({ user_id: user }).count<[{ count: number }]>("*")
+        .then(([{ count }]) =>
         {
-            std_response(res, {}, Http.OK);
+            std_response(res, { follows: count }, Http.OK);
         })
-        .catch((e) =>
+        .catch(() =>
         {
-            std_response_error(res, "failed to unlike post", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR);
+            std_response_error(res, "failed to count follows", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR);
         })
 };
 
 export default docroute()
-    .summary("Remove a like from a post")
-    .parameter("path", "post", "number", true, param_validator_post)
+    .summary("Get the number of follows a user has")
+    .parameter("path", "user", "number", true, param_validator_user)
     .handler(handler)
     .authoriser(route_jwt_authoriser)
     .build();

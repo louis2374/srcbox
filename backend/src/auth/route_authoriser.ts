@@ -22,8 +22,14 @@ export const route_jwt_authoriser: EndpointAuthorizer<DB_User> = async (p_req: R
     if (!is_valid_token) return;
 
     // Check user exists
-    const user = db_get_user_by_id(is_valid_token);
+    const user = await db_get_user_by_id(is_valid_token.user_id);
 
-    // Will be the user or undefined
-    return user;
+    // Invalid user id
+    if (!user) return;
+
+    // Check version, for jwt invalidation, must match
+    if (user.user_version === is_valid_token.version) return user;
+
+    // Invalid version
+    return;
 }

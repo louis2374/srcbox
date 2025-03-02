@@ -5,26 +5,26 @@ const secret = process.env.JSONWEBTOKEN_SECRET || "12345";
 const JWT_AUDIENCE = "com.srcbox.auth";
 
 // Creates a login token, signed with sub as user id
-export const jwt_create_login_token = (p_user_id: number, p_expires_in_h: number) =>
+export const jwt_create_login_token = (p_user: DB_User, p_expires_in_h: number) =>
 {
     const options: jwt.SignOptions =
     {
         // Convert hours to seconds
         expiresIn: p_expires_in_h * 60 * 60,
         audience: JWT_AUDIENCE,
-        subject: p_user_id.toString(),
-        issuer: JWT_AUDIENCE,
+        subject: p_user.user_id.toString(),
+        issuer: JWT_AUDIENCE
     }
 
     // I may add extra stuff to the body, such as user agent, ip, platform
     // these could help with security a little
-    const token = jwt.sign({}, secret, options);
+    const token = jwt.sign({ version: p_user.user_version }, secret, options);
 
     return token;
 }
 
 // Returns the user id if the token is valid, undefined otherwise
-export const jwt_verify_login_token = (p_token: string): number | undefined =>
+export const jwt_verify_login_token = (p_token: string): { user_id: number, version: number } | undefined =>
 {
     // Checks these match
     const options: VerifyOptions =
@@ -37,7 +37,10 @@ export const jwt_verify_login_token = (p_token: string): number | undefined =>
     try
     {
         const token = jwt.verify(p_token, secret, options) as JwtPayload;
-        if (token.sub) return Number(token.sub) || undefined;
+        if (token.sub && !isNaN(token.version))
+        {
+            return { version: Number(token.version), user_id: Number(token.sub) }
+        }
         else return undefined;
     }
     catch (e)

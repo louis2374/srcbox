@@ -3,7 +3,8 @@ CREATE TABLE tbl_users (
     user_name VARCHAR(32) NOT NULL UNIQUE,
     user_email VARCHAR(128) NOT NULL UNIQUE,
     user_password VARCHAR(96) NOT NULL,
-    user_verified BOOLEAN NOT NULL
+    user_verified BOOLEAN NOT NULL,
+    user_version INT NOT NULL DEFAULT 0
 );
 
 /* This makes it so when i search for a user by email/name, it is much faster */

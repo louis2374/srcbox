@@ -16,7 +16,7 @@ export const param_validator_post: ParamValidatorFuncion<number> = async (p_res:
         // Doesnt exist
         else
         {
-            std_response_error(p_res, "post does not exist", StdAPIErrors.POST_NOT_FOUND, Http.NOT_FOUND)
+            std_response_error(p_res, "post not found", StdAPIErrors.NOT_FOUND, Http.NOT_FOUND)
             return false;
         }
     }

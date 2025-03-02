@@ -35,7 +35,7 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post }, 
         })
         .catch((e) =>
         {
-            std_response_error(res, e, StdAPIErrors.UNKNOWN, Http.OK);
+            std_response_error(res, "failed to add comment", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR);
         })
 };
 

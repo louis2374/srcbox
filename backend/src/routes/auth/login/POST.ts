@@ -32,7 +32,7 @@ const handler: HandlerFunction<Params> = async (req, res, { body: { email, passw
     // May add more checking in the future
 
     // Create token that lasts 2 weeks
-    const token = jwt_create_login_token(user.user_id, 24 * 14);
+    const token = jwt_create_login_token(user, 24 * 14);
 
     // Send to user
     std_response(res, { token }, Http.CREATED);

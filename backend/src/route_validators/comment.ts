@@ -16,7 +16,7 @@ export const param_validator_comment: ParamValidatorFuncion<number> = async (p_r
         // Doesnt exist
         else
         {
-            std_response_error(p_res, "comment not found", StdAPIErrors.POST_NOT_FOUND, Http.NOT_FOUND)
+            std_response_error(p_res, "comment not found", StdAPIErrors.NOT_FOUND, Http.NOT_FOUND)
             return false;
         }
     }
