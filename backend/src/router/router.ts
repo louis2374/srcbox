@@ -2,7 +2,7 @@ import path from "path"
 import { get_all_files } from "./files";
 import { DocRoute, DocRouteFile, HandlerFunction, HandlerFunctionAuth, RouteLoadData } from "./route_types";
 import { Application, Handler, Request, Response } from "express";
-import { check_params_valid, construct_params } from "./route_params";
+import { check_params_valid, construct_params, params_validator_run } from "./route_params";
 import { Http, is_ts_node, Method, StdAPIErrors } from "@srcbox/library";
 import { generate_preprocess_error } from "./router_preprocess_error";
 import { std_response_error } from "./standard_response";
@@ -110,7 +110,6 @@ const assign_route = (p_route: DocRoute, p_server: Application) =>
             }
         }
 
-
         // If no params, call the hander immediately
         if (!p_route.parameters)
         {
@@ -140,8 +139,14 @@ const assign_route = (p_route: DocRoute, p_server: Application) =>
         // Build params, and call the handler with them
         const params = construct_params(p_route.parameters, req);
 
+        // Check validators
+        const all_validators_true = await params_validator_run(res, params, p_route.parameters);
+
+        // Some param was invalid
+        if (!all_validators_true) return;
+
         // A little type unsafe, however so long as
-        // the endpoint is setup, it should be ok
+        // the endpoint is setup properly, it will be ok
         (p_route.handler as HandlerFunctionAuth<{}>)(req, res, params, auth_user as number);
     })
 }

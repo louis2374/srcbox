@@ -8,6 +8,7 @@ import { jwt_create_login_token } from "../../../auth/jwt";
 import { route_jwt_authoriser } from "../../../auth/route_authoriser";
 import { db_con } from "../../../database/connection";
 import { post_create_upload_url, post_remove_upload_url } from "../../../post_storage/storage";
+import { param_validator_post } from "../../../router/route_validators/post";
 
 interface Params
 {
@@ -23,7 +24,10 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }
         .then((retrieved_post) =>
         {
             if (retrieved_post) std_response(res, retrieved_post, Http.OK);
-            else std_response_error(res, "post not found", StdAPIErrors.POST_NOT_FOUND, Http.NOT_FOUND);
+
+            // I put an error here, instead of not found bc this should only happen on the very rare
+            // occasion, and I want to know when it does
+            else std_response_error(res, "encountered an error retrieving post", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR);
         })
         .catch(() =>
         {
@@ -33,7 +37,7 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }
 
 export default docroute()
     .summary("Get an existing post via id")
-    .parameter("path", "post", "number", true)
+    .parameter("path", "post", "number", true, param_validator_post)
     .handler(handler)
     .authoriser(route_jwt_authoriser)
     .build();

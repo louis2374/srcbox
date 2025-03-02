@@ -5,6 +5,7 @@ import { std_response, std_response_error } from "../../../../router/standard_re
 import { route_jwt_authoriser } from "../../../../auth/route_authoriser";
 import { db_con } from "../../../../database/connection";
 import { post_exists } from "../../../../database/interface/post";
+import { param_validator_post } from "../../../../router/route_validators/post";
 
 interface Params
 {
@@ -16,23 +17,6 @@ interface Params
 
 const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }, p_user) =>
 {
-    // Check if the post exists
-    try
-    {
-        const exists = await post_exists(post);
-
-        if (!exists)
-        {
-            std_response_error(res, "post does not exist", StdAPIErrors.POST_NOT_FOUND, Http.NOT_FOUND)
-            return;
-        }
-    }
-    catch (e)
-    {
-        std_response_error(res, "failed to retrieve post", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR)
-        return;
-    }
-
     db_con("tbl_likes").where({ post_id: post }).count<[{ count: number }]>("*")
         .then(([{ count }]) =>
         {
@@ -46,7 +30,7 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }
 
 export default docroute()
     .summary("Get the number of likes a post has")
-    .parameter("path", "post", "number", true)
+    .parameter("path", "post", "number", true, param_validator_post)
     .handler(handler)
     .authoriser(route_jwt_authoriser)
     .build();

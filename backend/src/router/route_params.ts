@@ -1,5 +1,5 @@
-import { Request } from "express";
-import { DocParam, DocRouteParams, HandlerFunctionParams, Prim, PrimTS } from "./route_types";
+import { Request, Response } from "express";
+import { DocParam, DocRoute, DocRouteParams, HandlerFunctionParams, Prim, PrimTS } from "./route_types";
 
 export interface ValidationData
 {
@@ -180,4 +180,37 @@ export const construct_params = (p_requested: DocRouteParams, p_req: Request): H
     }
 
     return constructed;
+}
+
+// Runs the validator on each param if it exists
+export const params_validator_run = async (p_res: Response, p_params: HandlerFunctionParams, p_param_info: DocRouteParams) =>
+{
+    // All params combined to make it easier to loop
+    // Its ugly, but basically just joins the two p_params and p_param_info, and combines the param locations
+    const all_params: Array<{ value: PrimTS, info: DocParam | undefined }> = [
+        ...Object.entries(p_params.body || {}).map(([name, value]) => ({ value, info: (p_param_info.body || []).find((p) => p.name === name) })),
+        ...Object.entries(p_params.path || {}).map(([name, value]) => ({ value, info: (p_param_info.path || []).find((p) => p.name === name) })),
+        ...Object.entries(p_params.url || {}).map(([name, value]) => ({ value, info: (p_param_info.url || []).find((p) => p.name === name) }))
+    ]
+
+    // Check each param
+    for (let i = 0; i < all_params.length; i++)
+    {
+        const info = all_params[i].info;
+
+        if (info?.validator)
+        {
+            // If there is a validator, run it
+            const valid = await info.validator(p_res, all_params[i].value);
+
+            // If the param was not valid, break the loop and return false
+            // the validator will handle the request
+            if (!valid)
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }

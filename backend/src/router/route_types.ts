@@ -52,7 +52,8 @@ export interface DocParam
     name: string,
     description?: string,
     type: Prim,
-    required: boolean
+    required: boolean,
+    validator?: ParamValidatorFuncion<PrimTS>
 }
 
 // String types
@@ -83,3 +84,9 @@ export type EndpointAuthorizer = (header: Record<string, unknown>) => Promise<nu
 
 // Stores info about a root during the loading process
 export type RouteLoadData = Partial<Omit<DocRoute, "method">> & { error?: string, method: string | Method };
+
+// Function called on a param to ensure it is valid before
+// being passed to the handler
+// This handler should be defined like an endpoint, and should directly respond if there is an error
+// if there is an error it should return false
+export type ParamValidatorFuncion<T extends PrimTS> = (p_res: Response, p_param: T) => Promise<boolean>;

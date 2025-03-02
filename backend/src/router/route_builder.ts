@@ -1,5 +1,5 @@
 import { ContentType, Http } from "@srcbox/library";
-import { BadRequestHandlerFunction, ContentFormat, DocParam, DocResponse, DocRoute, DocRouteFile, EndpointAuthorizer, GenericHandler, HandlerFunction, HandlerFunctionAuth, HandlerFunctionParams, Prim } from "./route_types";
+import { BadRequestHandlerFunction, ContentFormat, DocParam, DocResponse, DocRoute, DocRouteFile, EndpointAuthorizer, GenericHandler, HandlerFunction, HandlerFunctionAuth, HandlerFunctionParams, ParamValidatorFuncion, Prim, PrimTS } from "./route_types";
 
 // Used for building a route
 // Each function returns a ref to the class so builder syntax can be used
@@ -27,14 +27,15 @@ class DocRouteBuilder
     }
 
     // Add a param
-    parameter = (p_location: "path" | "url" | "body", p_name: string, p_type: Prim, p_required: boolean, p_description?: string) =>
+    parameter = (p_location: "path" | "url" | "body", p_name: string, p_type: Prim, p_required: boolean, p_validator?: ParamValidatorFuncion<any>, p_description?: string) =>
     {
         const param: DocParam =
         {
             name: p_name,
             description: p_description,
             type: p_type,
-            required: p_required
+            required: p_required,
+            validator: p_validator
         }
 
         // Create object for params if it does not exist

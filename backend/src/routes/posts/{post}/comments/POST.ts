@@ -5,6 +5,7 @@ import { std_response, std_response_error } from "../../../../router/standard_re
 import { route_jwt_authoriser } from "../../../../auth/route_authoriser";
 import { db_con } from "../../../../database/connection";
 import { post_exists } from "../../../../database/interface/post";
+import { param_validator_post } from "../../../../router/route_validators/post";
 
 interface Params
 {
@@ -20,23 +21,6 @@ interface Params
 
 const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post }, body: { text } }, p_user) =>
 {
-    // Check if the post exists
-    try
-    {
-        const exists = await post_exists(post);
-
-        if (!exists)
-        {
-            std_response_error(res, "post does not exist", StdAPIErrors.POST_NOT_FOUND, Http.NOT_FOUND)
-            return;
-        }
-    }
-    catch (e)
-    {
-        std_response_error(res, "failed to retrieve post", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR)
-        return;
-    }
-
     const comment: Partial<DB_Comment> =
     {
         user_id: p_user,
@@ -57,8 +41,8 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post }, 
 
 export default docroute()
     .summary("Add a comment to a post")
-    .parameter("path", "post", "number", true)
-    .parameter("body", "text", "string", true, "The text content of the comment")
+    .parameter("path", "post", "number", true, param_validator_post)
+    .parameter("body", "text", "string", true, undefined, "The text content of the comment")
     .handler(handler)
     .authoriser(route_jwt_authoriser)
     .build();
