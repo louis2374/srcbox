@@ -1,8 +1,8 @@
-import { Http, STDAPIErrors } from "@srcbox/library";
+import { Http, StdAPIErrors } from "@srcbox/library";
 import { db_con } from "../../../database/connection";
 import { db_get_user_by_email } from "../../../database/interface/user";
 import { docroute } from "../../../router/route_builder";
-import { HandlerFunction } from "../../../router/route_types";
+import { HandlerFunction, HandlerFunctionAuth } from "../../../router/route_types";
 import { std_response, std_response_error } from "../../../router/standard_response";
 import { password_check } from "../../../auth/password";
 import { jwt_create_login_token } from "../../../auth/jwt";
@@ -25,7 +25,7 @@ const handler: HandlerFunction<Params> = async (req, res, { body: { email, passw
     // and if password matches
     if (!user || !await password_check(user.user_password, password))
     {
-        std_response_error(res, "invalid credentials", STDAPIErrors.INVALID_LOGIN_CREDENTIALS, Http.UNAUTHORIZED);
+        std_response_error(res, "invalid credentials", StdAPIErrors.INVALID_LOGIN_CREDENTIALS, Http.UNAUTHORIZED);
         return;
     }
 

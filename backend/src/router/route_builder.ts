@@ -1,5 +1,5 @@
 import { ContentType, Http } from "@srcbox/library";
-import { BadRequestHandlerFunction, ContentFormat, DocParam, DocResponse, DocRoute, DocRouteFile, HandlerFunction, HandlerFunctionParams, Prim } from "./route_types";
+import { BadRequestHandlerFunction, ContentFormat, DocParam, DocResponse, DocRoute, DocRouteFile, EndpointAuthorizer, GenericHandler, HandlerFunction, HandlerFunctionAuth, HandlerFunctionParams, Prim } from "./route_types";
 
 // Used for building a route
 // Each function returns a ref to the class so builder syntax can be used
@@ -84,12 +84,18 @@ class DocRouteBuilder
         return this;
     }
 
-    handler = <T extends HandlerFunctionParams>(p_handler: HandlerFunction<T>) =>
+    handler = <T extends HandlerFunctionParams>(p_handler: GenericHandler<T>) =>
     {
         // Ensure types match params
         // TODO
 
         this.route.handler = p_handler;
+        return this;
+    }
+
+    authoriser = (p_authoriser: EndpointAuthorizer) =>
+    {
+        this.route.authoriser = p_authoriser;
         return this;
     }
 

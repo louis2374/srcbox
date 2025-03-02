@@ -3,12 +3,13 @@
 // the code rather than compare string our output it
 // to the user directly
 
-export enum STDAPIErrors
+export enum StdAPIErrors
 {
     GENERIC = 1,
     USERNAME_ALREADY_EXISTS,
     EMAIL_ALREADY_EXISTS,
     UNKNOWN,
     BAD_PARAMS,
-    INVALID_LOGIN_CREDENTIALS
+    INVALID_LOGIN_CREDENTIALS,
+    UNAUTHORIZED
 }

@@ -1,4 +1,4 @@
-import { DB_User, Http, PostgresErrorCode, STDAPIErrors } from "@srcbox/library";
+import { DB_User, Http, PostgresErrorCode, StdAPIErrors } from "@srcbox/library";
 import { db_con } from "../../database/connection";
 import { docroute } from "../../router/route_builder";
 import { std_response, std_response_error } from "../../router/standard_response";
@@ -37,7 +37,7 @@ const handler: HandlerFunction<Params> = async (req, res, { body: { username, em
     }
     catch (e)
     {
-        std_response_error(res, "encountered an error creating account", STDAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR);
+        std_response_error(res, "encountered an error creating account", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR);
     }
 
     // Construct user obj, without id
@@ -66,20 +66,20 @@ const handler: HandlerFunction<Params> = async (req, res, { body: { username, em
                 // Check which constraint caused the error, if it was a constraint
                 if (e.constraint === CONSTRAINT_USERS_USERNAME)
                 {
-                    std_response_error(res, "username already in use", STDAPIErrors.USERNAME_ALREADY_EXISTS, Http.CONFLICT);
+                    std_response_error(res, "username already in use", StdAPIErrors.USERNAME_ALREADY_EXISTS, Http.CONFLICT);
                 }
                 else if (e.constraint === CONSTRAINT_USERS_EMAIL)
                 {
-                    std_response_error(res, "email already in use", STDAPIErrors.EMAIL_ALREADY_EXISTS, Http.CONFLICT);
+                    std_response_error(res, "email already in use", StdAPIErrors.EMAIL_ALREADY_EXISTS, Http.CONFLICT);
                 }
                 else
                 {
-                    std_response_error(res, "encountered an error creating account", STDAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR)
+                    std_response_error(res, "encountered an error creating account", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR)
                 }
             }
             else
             {
-                std_response_error(res, "encountered an error creating account", STDAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR)
+                std_response_error(res, "encountered an error creating account", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR)
             }
         })
 };

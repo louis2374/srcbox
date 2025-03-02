@@ -1,9 +1,9 @@
 import path from "path"
 import { get_all_files } from "./files";
-import { DocRoute, DocRouteFile, RouteLoadData } from "./route_types";
-import { Application, Request, Response } from "express";
+import { DocRoute, DocRouteFile, HandlerFunction, HandlerFunctionAuth, RouteLoadData } from "./route_types";
+import { Application, Handler, Request, Response } from "express";
 import { check_params_valid, construct_params } from "./route_params";
-import { Http, is_ts_node, Method, STDAPIErrors } from "@srcbox/library";
+import { Http, is_ts_node, Method, StdAPIErrors } from "@srcbox/library";
 import { generate_preprocess_error } from "./router_preprocess_error";
 import { std_response_error } from "./standard_response";
 import { ConsoleColor, count_chars } from "@srcbox/library/src";
@@ -92,14 +92,27 @@ const assign_route = (p_route: DocRoute, p_server: Application) =>
     };
 
     // Assign the valid route
-    method_function_map[p_route.method](p_route.path, (req: Request, res: Response) =>
+    method_function_map[p_route.method](p_route.path, async (req: Request, res: Response) =>
     {
         // This is run every call to the route
+
+        // If an authoriser is set, call it first
+        let auth_user: number | undefined = undefined;
+        if (p_route.authoriser)
+        {
+            auth_user = await p_route.authoriser(req.headers);
+            if (auth_user == undefined || auth_user < 1)
+            {
+                std_response_error(res, "unauthorised", StdAPIErrors.UNAUTHORIZED, Http.UNAUTHORIZED)
+                return;
+            }
+        }
+
 
         // If no params, call the hander immediately
         if (!p_route.parameters)
         {
-            p_route.handler(req, res, {});
+            (p_route.handler as HandlerFunctionAuth<{}>)(req, res, {}, auth_user as number);
             return;
         }
 
@@ -117,13 +130,16 @@ const assign_route = (p_route: DocRoute, p_server: Application) =>
             {
                 // Generate error and send it
                 const error = generate_preprocess_error(param_check);
-                std_response_error(res, error, STDAPIErrors.BAD_PARAMS, Http.BAD_REQUEST);
+                std_response_error(res, error, StdAPIErrors.BAD_PARAMS, Http.BAD_REQUEST);
             }
             return;
         }
 
         // Build params, and call the handler with them
         const params = construct_params(p_route.parameters, req);
-        p_route.handler(req, res, params);
+
+        // A little type unsafe, however so long as
+        // the endpoint is setup, it should be ok
+        (p_route.handler as HandlerFunctionAuth<{}>)(req, res, params, auth_user as number);
     })
 }
