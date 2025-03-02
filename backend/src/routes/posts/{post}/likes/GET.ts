@@ -15,7 +15,6 @@ interface Params
 
 const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }, p_user) =>
 {
-    console.log("HI")
     // Check if the post exists
     try
     {
@@ -33,7 +32,7 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }
         return;
     }
 
-    db_con("tbl_posts").where({ post_id: post }).count<[{ count: number }]>("*")
+    db_con("tbl_likes").where({ post_id: post }).count<[{ count: number }]>("*")
         .then(([{ count }]) =>
         {
             std_response(res, { likes: count }, Http.OK);
