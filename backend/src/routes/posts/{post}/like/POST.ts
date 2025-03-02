@@ -5,7 +5,7 @@ import { std_response, std_response_error } from "../../../../router/standard_re
 import { route_jwt_authoriser } from "../../../../auth/route_authoriser";
 import { db_con } from "../../../../database/connection";
 import { post_exists } from "../../../../database/interface/post";
-import { param_validator_post } from "../../../../router/route_validators/post";
+import { param_validator_post } from "../../../../route_validators/post";
 
 interface Params
 {

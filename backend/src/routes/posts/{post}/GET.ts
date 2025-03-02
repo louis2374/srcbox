@@ -8,7 +8,7 @@ import { jwt_create_login_token } from "../../../auth/jwt";
 import { route_jwt_authoriser } from "../../../auth/route_authoriser";
 import { db_con } from "../../../database/connection";
 import { post_create_upload_url, post_remove_upload_url } from "../../../post_storage/storage";
-import { param_validator_post } from "../../../router/route_validators/post";
+import { param_validator_post } from "../../../route_validators/post";
 
 interface Params
 {

@@ -14,17 +14,28 @@ interface Params
     {
         post: number,
         comment: number
+    },
+    body:
+    {
+        text: string
     }
 }
 
-const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post, comment } }, p_user) =>
+const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post, comment }, body: { text } }, p_user) =>
 {
-    const delete_comment: Partial<DB_Comment> =
+    // Objects to find / update the comment
+    const find_comment: Partial<DB_Comment> =
     {
         comment_id: comment
+    }
+
+    const update_comment: Partial<DB_Comment> =
+    {
+        comment_text: text
     };
 
-    db_con("tbl_comments").where(delete_comment).delete()
+    // Update
+    db_con("tbl_comments").where(find_comment).update(update_comment)
         .then(() =>
         {
             std_response(res, {}, Http.OK);
@@ -36,9 +47,10 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post, co
 };
 
 export default docroute()
-    .summary("Remove a comment from a post")
+    .summary("Edit a comment")
     .parameter("path", "post", "number", true, param_validator_post)
     .parameter("path", "comment", "number", true, param_validator_comment)
+    .parameter("body", "text", "string", true)
     .handler(handler)
     .authoriser(route_jwt_authoriser)
     .build();

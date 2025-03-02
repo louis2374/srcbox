@@ -1,12 +1,11 @@
 import { Response } from "express";
-import { ParamValidatorFuncion } from "../route_types";
-import { post_exists } from "../../database/interface/post";
-import { std_response_error } from "../standard_response";
+import { ParamValidatorFuncion } from "../router/route_types";
+import { post_exists } from "../database/interface/post";
+import { std_response_error } from "../router/standard_response";
 import { Http, StdAPIErrors } from "@srcbox/library";
 
 export const param_validator_post: ParamValidatorFuncion<number> = async (p_res: Response, p_param: number): Promise<boolean> =>
 {
-    console.log("VALIDATOR")
     // This just checks if the post exists
     try
     {
