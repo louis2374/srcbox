@@ -4,6 +4,6 @@ import ExampleQ from "./ExampleQ";
 export default function Home()
 {
     return (
-        <ExampleQ />
+        <></>
     );
 }
