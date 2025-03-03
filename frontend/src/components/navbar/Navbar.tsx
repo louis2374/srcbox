@@ -32,13 +32,13 @@ const Navbar = () =>
                 className='hidden sm:block relative md:absolute p-4 text-3xl left-0 mr-auto md:mr-0'
             >Scrbox</Link>
 
-
             {
                 // Nav buttons
                 buttons.map(({ href, label, icon: Icon }) =>
                 {
                     const active = pn === href;
                     return <Link
+                        key={label}
                         href={href}
                         className={join('text-center w-24 py-3 px-1', active && "border-b-4 border-b-accent border-b-solid")}>
                         <Icon
