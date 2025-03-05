@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { ParamValidatorFuncion } from "../router/route_types";
-import { post_exists } from "../database/interface/post";
+import { post_get_by_id } from "../database/interface/post";
 import { std_response_error } from "../router/standard_response";
 import { Http, StdAPIErrors } from "@srcbox/library";
 
@@ -9,7 +9,7 @@ export const param_validator_post: ParamValidatorFuncion<number> = async (p_res:
     // This just checks if the post exists
     try
     {
-        const exists = await post_exists(p_param);
+        const exists = await post_get_by_id(p_param);
 
         if (exists) return true;
 

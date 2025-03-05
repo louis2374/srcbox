@@ -4,8 +4,6 @@ import { HandlerFunctionAuth } from "../../../../router/route_types";
 import { std_response, std_response_error } from "../../../../router/standard_response";
 import { route_jwt_authoriser } from "../../../../auth/route_authoriser";
 import { db_con } from "../../../../database/connection";
-import { post_exists } from "../../../../database/interface/post";
-import { param_validator_post } from "../../../../route_validators/post";
 import { param_validator_user } from "../../../../route_validators/user";
 
 interface Params

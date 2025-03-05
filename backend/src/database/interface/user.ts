@@ -1,8 +1,6 @@
 import { db_con } from "../connection"
 import { DB_User } from "@srcbox/library/src";
 
-
-
 export const db_get_user_by_id = async (p_id: number): Promise<DB_User | undefined> =>
 {
     const user = await db_con<DB_User>("tbl_users")
