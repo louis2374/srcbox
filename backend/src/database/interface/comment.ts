@@ -1,11 +1,19 @@
+import { DB_Comment } from "@srcbox/library";
 import { db_con } from "../connection";
 
-// If a comment exists
-export const comment_exists = async (p_id: number): Promise<boolean> =>
+// Get a comment via its id
+export const comment_get_by_id = async (p_id: number): Promise<DB_Comment | undefined> =>
 {
-    // Im not catching the error, any errors should propagate
-    const exists = await db_con("tbl_comments").where({ comment_id: p_id }).select("*");
+    try
+    {
+        // Get the first instance of a comment
+        const comment = await db_con("tbl_comments").where({ post_id: p_id }).select("*").first<DB_Comment | undefined>();
 
-    // Convert to bool, length 0 means it does not exist
-    return !!exists.length;
+        return comment;
+    }
+    catch (e)
+    {
+        console.error(e);
+        throw new Error("Failed to retrieve comment");
+    }
 }
