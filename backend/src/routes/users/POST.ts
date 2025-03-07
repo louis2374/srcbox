@@ -40,7 +40,7 @@ const handler: HandlerFunction<Params> = async (req, res, { body: { username, em
         std_response_error(res, "encountered an error creating account", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR);
     }
 
-    // Construct user obj, without id
+    // Construct user obj, without id and version
     const user: Omit<DB_User, "user_id" | "user_version"> =
     {
         user_email: email,
