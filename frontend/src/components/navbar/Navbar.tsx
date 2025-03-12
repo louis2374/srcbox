@@ -30,7 +30,7 @@ const Navbar = () =>
             <Link
                 href={"/"}
                 className='hidden sm:block relative md:absolute p-4 text-3xl left-0 mr-auto md:mr-0'
-            >Scrbox</Link>
+            >Srcbox</Link>
 
             {
                 // Nav buttons
