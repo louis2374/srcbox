@@ -4,6 +4,7 @@
 
 :root {
     --background: #ededed;
+    --background-darker: #1e1e1e;
     --foreground: #272727;
     --accent: #b72676;
 }
@@ -20,4 +21,32 @@ body {
     color: var(--foreground);
     background: var(--background);
     font-family: Arial, Helvetica, sans-serif;
+}
+
+/* SCROLL BAR */
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1e1e2f;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, var(--accent), var(--accent));
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, var(--accent), var(--accent));
+    box-shadow: 0px 0px 10px var(--accent);
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) var(--background);
 }

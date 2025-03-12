@@ -10,6 +10,7 @@ export default {
         extend: {
             colors: {
                 background: "var(--background)",
+                backgrounddarker: "var(--background-darker)",
                 foreground: "var(--foreground)",
                 accent: "var(--accent)",
             },

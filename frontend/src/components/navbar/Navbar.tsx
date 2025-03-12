@@ -25,7 +25,7 @@ const Navbar = () =>
     const pn = usePathname();
 
     return (
-        <div className='flex flex-row w-full justify-center h-[80px] relative'>
+        <div className='flex flex-row w-full justify-center h-[80px] sticky left-0 top-0 bg-inherit'>
 
             <Link
                 href={"/"}

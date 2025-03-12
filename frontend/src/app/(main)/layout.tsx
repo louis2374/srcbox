@@ -19,7 +19,9 @@ const layout: React.FC<Readonly<Props>> = ({ children }) =>
     return (
         <>
             <Navbar />
-            {children}
+            <section className="flex justify-center align-middle flex-1">
+                {children}
+            </section>
         </>
     )
 }
