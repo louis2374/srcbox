@@ -1,17 +1,27 @@
+import { DB_Post } from '@srcbox/library';
 import React from 'react'
 
-const PostCard = () =>
+interface Props
 {
+    post: DB_Post
+}
+
+const PostCard: React.FC<Props> = ({ post }) =>
+{
+
     return (
         <div className='flex flex-col w-full hover:bg-backgrounddarker p-4 rounded-lg'>
             <div className='w-full h-96 bg-neutral-700'>
-                <iframe src="https://player.smashy.stream/tv/1405?s=6&amp;e=6" className='w-full h-full'></iframe>
             </div>
-            <div className='pt-3'>
-                Title
+            <div className='flex flex-row justify-between gap-2 mt-2'>
+                <div className='pt-1'>
+                    {post.post_title}
+                </div>
+                <button className='p-2 bg-accent w-32 ml-auto'>Like</button>
+                <button className='p-2 bg-accent w-32'>Comment</button>
             </div>
         </div>
     )
 }
 
-export default PostCard
+export default PostCard;
