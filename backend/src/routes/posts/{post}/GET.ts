@@ -18,6 +18,8 @@ interface Params
     }
 }
 
+
+
 const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }, p_user) =>
 {
     const post_find: Partial<DB_Post> =
@@ -25,7 +27,16 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }
         post_id: post
     }
 
-    db_con("tbl_posts").select("*").where(post_find).first<DB_Post | undefined>()
+    db_con(db_con("tbl_posts").where(post_find).as("post"))
+        .leftJoin(db_con('tbl_users').where({ user_id: 1 }), "post", "user").first().then(console.log)
+
+    /*.leftJoin(
+        db_con('B').where('B.id', 2).as('t2'), 
+        't1.c', 
+        't2.d'
+      )*/
+
+    db_con("tbl_posts").where(post_find).first<DB_Post | undefined>()
         .then((retrieved_post) =>
         {
             if (retrieved_post) std_response(res, retrieved_post, Http.OK);
