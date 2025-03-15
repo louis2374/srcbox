@@ -1,4 +1,5 @@
 export * from "./typing/database_types";
+export * from "./typing/returnable_types";
 export * from "./typing/http";
 export * from "./typing/postgres"
 export * from "./util/dev";

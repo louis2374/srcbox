@@ -1,4 +1,4 @@
-import { DB_Post, Http, StdAPIErrors } from "@srcbox/library";
+import { D_Post, DB_Post, Http, StdAPIErrors } from "@srcbox/library";
 import { db_get_user_by_email } from "../../../database/interface/user";
 import { docroute } from "../../../router/route_builder";
 import { HandlerFunction, HandlerFunctionAuth } from "../../../router/route_types";
@@ -22,33 +22,26 @@ interface Params
 
 const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }, p_user) =>
 {
-    const post_find: Partial<DB_Post> =
-    {
-        post_id: post
-    }
-
-    db_con(db_con("tbl_posts").where(post_find).as("post"))
-        .leftJoin(db_con('tbl_users').where({ user_id: 1 }), "post", "user").first().then(console.log)
-
-    /*.leftJoin(
-        db_con('B').where('B.id', 2).as('t2'), 
-        't1.c', 
-        't2.d'
-      )*/
-
-    db_con("tbl_posts").where(post_find).first<DB_Post | undefined>()
-        .then((retrieved_post) =>
+    // Pretty big query, basically just grabs a bunch of data and joins it all together
+    // Its done in order, and will need to be updated as i modify the posts table (Which I will in the future)
+    db_con("tbl_posts as posts")
+        .select(
+            "posts.*",
+            // Need to use whereRaw, as the usual .where() does not allow string as second param
+            db_con("tbl_users as users").select("users.user_name").whereRaw("users.user_id = posts.user_id").as("user_name").first(),
+            db_con("tbl_comments as comments").count("*").where("comments.post_id", post).as("comment_count"),
+            db_con("tbl_likes as likes").count("*").where("likes.post_id", post).as("like_count"),
+            db_con("tbl_likes as likes").count("*").where("likes.post_id", post).andWhere("likes.user_id", p_user.user_id).as("liked"))
+        .first<D_Post>()
+        // I could not get this to format nicely
+        .then((dpost) =>
         {
-            if (retrieved_post) std_response(res, retrieved_post, Http.OK);
-
-            // I put an error here, instead of not found bc this should only happen on the very rare
-            // occasion, and I want to know when it does
-            else std_response_error(res, "encountered an error retrieving post", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR);
+            std_response(res, { ...dpost, liked: dpost.liked ? true : false }, Http.OK);
         })
         .catch(() =>
         {
-            std_response_error(res, "encountered an error retrieving post", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR);
-        });
+            std_response_error(res, "Failed to retrieve post", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR)
+        })
 };
 
 export default docroute()

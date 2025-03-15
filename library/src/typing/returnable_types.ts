@@ -10,7 +10,7 @@ export interface D_Comment
     post_id: number,
     comment_text: string,
 
-    // Extra
+    // User who posted comment
     user: D_User
 }
 
@@ -22,6 +22,14 @@ export interface D_Post
     post_title: string,
     post_description: string,
 
-    // Extra
+    // Full user who posted
     user: D_User
+
+    // Count
+    comments: number,
+    likes: number,
+
+    // If the user sending this request has liked the post
+    // Not always applicable
+    liked?: boolean,
 }
