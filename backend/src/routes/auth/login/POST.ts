@@ -35,7 +35,7 @@ const handler: HandlerFunction<Params> = async (req, res, { body: { email, passw
     const token = jwt_create_login_token(user, 24 * 14);
 
     // Send to user
-    std_response(res, { token }, Http.CREATED);
+    std_response(res, { token }, Http.OK);
 };
 
 export default docroute()

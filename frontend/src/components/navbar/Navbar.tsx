@@ -8,6 +8,7 @@ import { FaCode, FaSquarePlus } from 'react-icons/fa6';
 import { MdLeaderboard } from 'react-icons/md';
 import { usePathname } from 'next/navigation';
 import { join } from '@/lib/css';
+import MiniProfileBox from '../MiniProfileBox/MiniProfileBox';
 
 // Easier to map this array into the buttons, rather than
 // build each one individually
@@ -49,6 +50,8 @@ const Navbar = () =>
                     </Link>
                 })
             }
+
+            <MiniProfileBox />
         </div>
     )
 }

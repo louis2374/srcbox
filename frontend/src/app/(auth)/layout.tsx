@@ -1,13 +1,9 @@
-import type { GetServerSideProps, Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata } from "next";
 import "../globals.css";
-import { Context, ReactNode } from "react";
-import Navbar from "@/components/navbar/Navbar";
-import { RequestContext } from "next/dist/server/base-server";
-import { parseCookie } from "next/dist/compiled/@edge-runtime/cookies";
+import { ReactNode } from "react";
+import { auth_soft_is_logged_in } from "@/lib/auth";
 import { redirect } from "next/dist/server/api-utils";
-import { check_auth_redirect } from "@/lib/auth";
-
+import { permanentRedirect } from "next/navigation";
 export const metadata: Metadata = {
     title: "Base Title",
     description: "Bade Description",
@@ -20,13 +16,17 @@ interface Props
 
 const layout: React.FC<Readonly<Props>> = async ({ children }) =>
 {
-    await check_auth_redirect()
+    // If the user is already logged in, push them to home
+    const soft_logged = await auth_soft_is_logged_in();
+    if (soft_logged) permanentRedirect("/")
+
     return (
         <>
-            Auth
-            {children}
+            <section className="flex justify-center align-middle flex-1 bg-black">
+                {children}
+            </section>
         </>
     )
 }
 
-export default layout
+export default layout;

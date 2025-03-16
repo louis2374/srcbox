@@ -64,13 +64,13 @@ const handler: HandlerFunction<Params> = async (req, res, { body: { username, em
             if (e.code == PostgresErrorCode.UNIQUE_CONSTRAINT_VIOLATION)
             {
                 // Check which constraint caused the error, if it was a constraint
-                if (e.constraint === CONSTRAINT_USERS_USERNAME)
-                {
-                    std_response_error(res, "username already in use", StdAPIErrors.USERNAME_ALREADY_EXISTS, Http.CONFLICT);
-                }
-                else if (e.constraint === CONSTRAINT_USERS_EMAIL)
+                if (e.constraint === CONSTRAINT_USERS_EMAIL)
                 {
                     std_response_error(res, "email already in use", StdAPIErrors.EMAIL_ALREADY_EXISTS, Http.CONFLICT);
+                }
+                else if (e.constraint === CONSTRAINT_USERS_USERNAME)
+                {
+                    std_response_error(res, "username already in use", StdAPIErrors.USERNAME_ALREADY_EXISTS, Http.CONFLICT);
                 }
                 else
                 {

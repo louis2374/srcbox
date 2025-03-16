@@ -31,5 +31,5 @@ export interface D_Post
 
     // If the user sending this request has liked the post
     // Not always applicable
-    liked?: boolean,
+    liked: boolean,
 }
