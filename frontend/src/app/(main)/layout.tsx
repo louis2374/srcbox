@@ -1,10 +1,10 @@
-import type { GetServerSideProps, Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata } from "next";
 import ".././globals.css";
 import { ReactNode } from "react";
 import Navbar from "@/components/navbar/Navbar";
 import { auth_soft_is_logged_in } from "@/lib/auth";
 import { permanentRedirect } from "next/navigation";
+import { CookiesProvider } from "next-client-cookies/server";
 
 export const metadata: Metadata = {
     title: "Base Title",
@@ -25,10 +25,12 @@ const layout: React.FC<Readonly<Props>> = async ({ children }) =>
 
     return (
         <>
-            <section className="flex justify-center align-middle flex-1 bg-background">
-                <Navbar />
-                {children}
-            </section>
+            <CookiesProvider>
+                <section className="flex flex-col flex-1 bg-background items-center">
+                    <Navbar />
+                    {children}
+                </section>
+            </CookiesProvider>
         </>
     )
 }

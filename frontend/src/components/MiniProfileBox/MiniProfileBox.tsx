@@ -11,9 +11,9 @@ const MiniProfileBox = () =>
             <div
                 className='flex flex-row p-1 align-middle justify-center relative z-20'
             >
-                <div className={join('flex hover:bg-neutral-800 rounded-lg cursor-pointer m-2', selected && "bg-neutral-800")}>
+                <div>
                     <img
-                        className='rounded-[50%] m-1' src='pfp.webp'
+                        className={join('w-11 rounded-[50%] m-3 cursor-pointer outline-accent hover:outline', selected && "outline-[5px] outline")} src='pfp.webp'
                         onClick={() => set_selected(!selected)}
                     />
                 </div>

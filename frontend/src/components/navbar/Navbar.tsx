@@ -26,7 +26,7 @@ const Navbar = () =>
     const pn = usePathname();
 
     return (
-        <div className='flex flex-row w-full justify-between h-[80px] sticky left-0 top-0 bg-inherit'>
+        <nav className='flex flex-row w-full justify-between h-[80px] sticky left-0 top-0 bg-inherit'>
 
             <Link
                 href={"/"}
@@ -54,7 +54,7 @@ const Navbar = () =>
             </div>
 
             <MiniProfileBox />
-        </div>
+        </nav>
     )
 }
 

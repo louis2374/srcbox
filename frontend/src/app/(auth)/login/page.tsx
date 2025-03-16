@@ -88,7 +88,7 @@ const page = () =>
         <div className='align-middle justify-center flex flex-col gap-5'>
             <div className='text-center flex flex-col gap-1 pb-5'>
                 <h1 className='text-4xl'>Welcome Back</h1>
-                <span>New Here? Register <Link className='text-accent hover:underline' href={"/register"}>here</Link></span>
+                <span>New? Register <Link className='text-accent hover:underline' href={"/register"}>here</Link></span>
             </div>
 
             {

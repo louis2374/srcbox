@@ -1,20 +1,33 @@
-import { cookies } from "next/headers";
+"use client"
+import { api, useToken } from "@/lib/api/api";
+import { D_Post, Method } from "@srcbox/library";
+import { useRef, useState } from "react";
 import PostCard from "./components/PostCard";
-import PostSplitter from "./components/PostSplitter";
-import { DB_Post } from "@srcbox/library";
 
-const Home = async () =>
+const Home = () =>
 {
+    const posts = useRef<Array<D_Post>>([]);
+    const [loading, set_loading] = useState(true)
+
+    const token = useToken();
+
+    const click = async () =>
+    {
+        const response = await api("/posts", Method.GET, { token });
+
+        if (response.ok)
+        {
+            posts.current = response.body as Array<D_Post>
+        }
+
+        set_loading(false);
+    }
+
     return (
-        <div className="max-w-4xl flex flex-1 flex-col justify-center gap-1 pt-8">
+        <div className="">
+            <button onClick={click}>Click</button>
             {
-                /*
-                posts.map((post) =>
-                    <div key={post.post_id}>
-                        <PostCard post={post} />
-                        <PostSplitter />
-                    </div>
-                )*/
+                posts.current.map((p) => (<PostCard key={p.post_id} post={p} />))
             }
         </div>
     );
