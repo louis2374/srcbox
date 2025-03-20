@@ -201,7 +201,7 @@ export const params_validator_run = async (p_res: Response, p_params: HandlerFun
         if (info?.validator)
         {
             // If there is a validator, run it
-            const valid = await info.validator(p_res, all_params[i].value);
+            const valid = await info.validator(all_params[i].value, p_res);
 
             // If the param was not valid, break the loop and return false
             // the validator will handle the request

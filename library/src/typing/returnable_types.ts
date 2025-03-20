@@ -22,12 +22,12 @@ export interface D_Post
     post_title: string,
     post_description: string,
 
-    // Full user who posted
-    user: D_User
+    // User who posted
+    user_name: string
 
     // Count
-    comments: number,
-    likes: number,
+    comment_count: number,
+    like_count: number,
 
     // If the user sending this request has liked the post
     // Not always applicable

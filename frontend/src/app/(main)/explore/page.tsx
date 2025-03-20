@@ -1,8 +1,8 @@
 "use client"
 import { api, useToken } from "@/lib/api/api";
 import { D_Post, Method } from "@srcbox/library";
-import { useRef, useState } from "react";
-import PostCard from "./components/PostCard";
+import { useEffect, useRef, useState } from "react";
+import PostCard from "../../../components/PostCard/PostCard";
 
 const Home = () =>
 {
@@ -11,8 +11,10 @@ const Home = () =>
 
     const token = useToken();
 
-    const click = async () =>
+    const load_new_posts = async () =>
     {
+        set_loading(true);
+
         const response = await api("/posts", Method.GET, { token });
 
         if (response.ok)
@@ -23,9 +25,13 @@ const Home = () =>
         set_loading(false);
     }
 
+    useEffect(() =>
+    {
+        load_new_posts();
+    }, [])
+
     return (
-        <div className="">
-            <button onClick={click}>Click</button>
+        <div className="w-full max-w-3xl">
             {
                 posts.current.map((p) => (<PostCard key={p.post_id} post={p} />))
             }

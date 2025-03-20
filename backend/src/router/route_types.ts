@@ -89,4 +89,4 @@ export type RouteLoadData = Partial<Omit<DocRoute, "method">> & { error?: string
 // being passed to the handler
 // This handler should be defined like an endpoint, and should directly respond if there is an error
 // if there is an error it should return false
-export type ParamValidatorFuncion<T extends PrimTS> = (p_res: Response, p_param: T) => Promise<boolean>;
+export type ParamValidatorFuncion<T extends PrimTS> = (p_param: T, p_res: Response) => Promise<boolean>;

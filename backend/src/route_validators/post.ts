@@ -4,7 +4,7 @@ import { post_get_by_id } from "../database/interface/post";
 import { std_response_error } from "../router/standard_response";
 import { Http, StdAPIErrors } from "@srcbox/library";
 
-export const param_validator_post: ParamValidatorFuncion<number> = async (p_res: Response, p_param: number): Promise<boolean> =>
+export const param_validator_post: ParamValidatorFuncion<number> = async (p_param: number, p_res: Response): Promise<boolean> =>
 {
     // This just checks if the post exists
     try

@@ -4,7 +4,7 @@ import { std_response_error } from "../router/standard_response";
 import { Http, StdAPIErrors } from "@srcbox/library";
 import { comment_get_by_id } from "../database/interface/comment";
 
-export const param_validator_comment: ParamValidatorFuncion<number> = async (p_res: Response, p_param: number): Promise<boolean> =>
+export const param_validator_comment: ParamValidatorFuncion<number> = async (p_param: number, p_res: Response): Promise<boolean> =>
 {
     // This just checks if the comment exists
     try
