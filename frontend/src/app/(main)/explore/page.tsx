@@ -33,7 +33,7 @@ const Home = () =>
     return (
         <div className="w-full max-w-3xl">
             {
-                posts.current.map((p) => (<PostCard key={p.post_id} post={p} />))
+                posts.current.map((p) => (<PostCard viewable key={p.post_id} post={p} />))
             }
         </div>
     );

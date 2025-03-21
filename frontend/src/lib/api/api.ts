@@ -1,6 +1,5 @@
 import { Http, Method, StdAPIErrors } from "@srcbox/library"
 import { useCookies } from "next-client-cookies"
-import { CookiesProvider, getCookies } from "next-client-cookies/server"
 
 export interface ApiOptions
 {

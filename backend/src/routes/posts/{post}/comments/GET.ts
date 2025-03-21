@@ -12,37 +12,25 @@ interface Params
     path:
     {
         post: number,
-    },
-    body:
-    {
-        text: string
     }
 }
 
-const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post }, body: { text } }, p_user) =>
+const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }, p_user) =>
 {
-    const comment: Partial<DB_Comment> =
-    {
-        user_id: p_user.user_id,
-        post_id: post,
-        comment_text: text
-    };
-
-    db_con("tbl_comments").insert(comment).returning<Array<DB_Comment>>("*")
-        .then(([comment]) =>
+    db_con("tbl_comments").select<Array<DB_Comment>>("*").where("post_id", post)
+        .then((comments) =>
         {
-            std_response(res, comment, Http.OK);
+            std_response(res, comments, Http.OK);
         })
         .catch((e) =>
         {
-            std_response_error(res, "failed to add comment", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR);
+            std_response_error(res, "failed to get comments", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR);
         })
 };
 
 export default docroute()
-    .summary("Add a comment to a post")
-    .parameter("path", "post", "number", true, param_validator_post)
-    .parameter("body", "text", "string", true, undefined, "The text content of the comment")
+    .summary("Get all comments (DEV)")
     .handler(handler)
+    .parameter("path", "post", "number", true, param_validator_post)
     .authoriser(route_jwt_authoriser)
     .build();

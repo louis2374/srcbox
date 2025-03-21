@@ -13,7 +13,7 @@ const MiniProfileBox = () =>
             >
                 <div>
                     <img
-                        className={join('w-11 rounded-[50%] m-3 cursor-pointer outline-accent hover:outline', selected && "outline-[5px] outline")} src='pfp.webp'
+                        className={join('w-11 rounded-[50%] m-3 cursor-pointer outline-accent hover:outline', selected && "outline-[5px] outline")} src='/pfp.webp'
                         onClick={() => set_selected(!selected)}
                     />
                 </div>
