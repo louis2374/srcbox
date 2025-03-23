@@ -9,8 +9,8 @@ import React, { FormEvent, useState } from 'react'
 
 const page = () =>
 {
-    const [email, set_email] = useState("aseel@muslim.com");
-    const [password, set_password] = useState("poosock_master_12");
+    const [email, set_email] = useState("bingus@bingus.com");
+    const [password, set_password] = useState("bingus123");
 
     // Current error
     const [error, set_error] = useState("");
