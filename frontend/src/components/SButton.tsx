@@ -7,14 +7,16 @@ interface Props
     onClick?: React.MouseEventHandler<HTMLButtonElement>,
     children?: React.ReactNode,
     type?: "submit" | "reset" | "button",
-    className?: string
+    className?: string,
+    disabled?: boolean
 }
 
-const SButton: React.FC<Props> = ({ onClick, children, type = "button", className }) =>
+const SButton: React.FC<Props> = ({ disabled, onClick, children, type = "button", className }) =>
 {
     return (
         <button
-            className={join(className, "")}
+            disabled={disabled}
+            className={join(className, "active:translate-y-px", disabled && "pointer-events-none text-neutral-500")}
             onClick={onClick}
             type={type}
         >{children}</button>

@@ -1,4 +1,4 @@
-import { DB_Comment, Http, StdAPIErrors } from "@srcbox/library";
+import { D_Comment, DB_Comment, Http, StdAPIErrors } from "@srcbox/library";
 import { docroute } from "../../../../router/route_builder";
 import { HandlerFunctionAuth } from "../../../../router/route_types";
 import { std_response, std_response_error } from "../../../../router/standard_response";
@@ -17,10 +17,19 @@ interface Params
 
 const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }, p_user) =>
 {
-    db_con("tbl_comments").select<Array<DB_Comment>>("*").where("post_id", post)
+    console.log(post)
+    db_con("tbl_comments as comments")
+        .select<Array<D_Comment>>(
+            "comments.*",
+            // Need to use whereRaw, as the usual .where() does not allow string as second param
+            db_con("tbl_users as users").select("users.user_name").whereRaw("users.user_id = comments.user_id").as("user_name")
+        )
+        .where("post_id", post)
         .then((comments) =>
         {
-            std_response(res, comments, Http.OK);
+            // Adding temp pfp for now
+
+            std_response(res, comments.map(c => ({ ...c, user_pfp: "/pfp.webp" })), Http.OK);
         })
         .catch((e) =>
         {

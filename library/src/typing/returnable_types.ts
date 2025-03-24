@@ -2,6 +2,7 @@ export interface D_User
 {
     user_id: number,
     user_name: string,
+    user_pfp: string
 }
 
 export interface D_Comment
@@ -11,7 +12,9 @@ export interface D_Comment
     comment_text: string,
 
     // User who posted comment
-    user: D_User
+    user_id: number,
+    user_name: string,
+    user_pfp: string,
 }
 
 export interface D_Post

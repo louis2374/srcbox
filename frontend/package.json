@@ -13,12 +13,16 @@
         "@emotion/styled": "^11.14.0",
         "@mui/material": "^6.4.8",
         "@srcbox/library": "*",
+        "@types/highlight.js": "^9.12.4",
+        "@types/react-syntax-highlighter": "^15.5.13",
+        "highlight.js": "^11.11.1",
         "next": "15.1.7",
         "next-client-cookies": "^2.0.1",
         "next-cloudinary": "^6.16.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
-        "react-icons": "^5.5.0"
+        "react-icons": "^5.5.0",
+        "react-syntax-highlighter": "^15.6.1"
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3",

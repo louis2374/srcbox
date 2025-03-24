@@ -1,4 +1,4 @@
-import { DB_Comment, Http, StdAPIErrors } from "@srcbox/library";
+import { D_Comment, DB_Comment, Http, StdAPIErrors } from "@srcbox/library";
 import { docroute } from "../../../../router/route_builder";
 import { HandlerFunctionAuth } from "../../../../router/route_types";
 import { std_response, std_response_error } from "../../../../router/standard_response";
@@ -28,15 +28,30 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post }, 
         comment_text: text
     };
 
-    db_con("tbl_comments").insert(comment).returning<Array<DB_Comment>>("*")
-        .then(([comment]) =>
+    try
+    {
+        // Create the comment, and return the entire inserted row
+        const [created] = await db_con("tbl_comments").insert(comment).returning<Array<DB_Comment>>("*")
+
+        if (created.comment_id)
         {
-            std_response(res, comment, Http.OK);
-        })
-        .catch((e) =>
-        {
-            std_response_error(res, "failed to add comment", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR);
-        })
+            // Add user detail
+            const detailed: D_Comment =
+            {
+                ...created,
+                user_name: p_user.user_name,
+                user_pfp: "/pfp.webp"
+            }
+
+            // Return this to the user
+            std_response(res, detailed, Http.OK);
+        }
+        else throw new Error("Failed to post comment")
+    }
+    catch (e)
+    {
+        std_response_error(res, "failed to add comment", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR);
+    }
 };
 
 export default docroute()

@@ -1,4 +1,4 @@
-import CommentBox from '@/components/CommentBox/CommentBox';
+import Comments from '@/components/CommentBox/Comments';
 import PostCard from '@/components/PostCard/PostCard';
 import { api } from '@/lib/api/api';
 import { getToken } from '@/lib/api/ssr';
@@ -14,13 +14,14 @@ interface Props
 const page: React.FC<Props> = async ({ params }) =>
 {
     const { post_id } = await params;
-    console.log({ post_id })
+    console.log({ inside: post_id || "NOT SET" })
     if (!post_id)
     {
         permanentRedirect("/explore")
     }
 
     const token = await getToken();
+
     try
     {
         const response = await api("/posts/" + post_id, Method.GET, { token });
@@ -30,7 +31,7 @@ const page: React.FC<Props> = async ({ params }) =>
             return (
                 <div className='w-full max-w-3xl'>
                     <PostCard post={post} />
-                    <CommentBox post_id={post.post_id} />
+                    <Comments post_id={Number(post_id)} />
                 </div>
             )
         }

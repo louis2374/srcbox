@@ -29,11 +29,14 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }
             "posts.*",
             // Need to use whereRaw, as the usual .where() does not allow string as second param
             db_con("tbl_users as users").select("users.user_name").whereRaw("users.user_id = posts.user_id").as("user_name").first(),
+
+            // Count number of likes and comments
             db_con("tbl_comments as comments").count("*").where("comments.post_id", post).as("comment_count"),
             db_con("tbl_likes as likes").count("*").where("likes.post_id", post).as("like_count"),
+
+            // I add an extra value here, to state whether the caller of this request has liked the post, for ui purposes
             db_con("tbl_likes as likes").count("*").where("likes.post_id", post).andWhere("likes.user_id", p_user.user_id).as("liked"))
         .first<D_Post>()
-        // I could not get this to format nicely
         .then((dpost) =>
         {
             std_response(res, { ...dpost, liked: dpost.liked ? true : false }, Http.OK);
