@@ -3,12 +3,15 @@ import { debounce } from "@/lib/util";
 import { SyntheticEvent, useCallback, useMemo, useRef, useState } from "react";
 import { Prism } from "react-syntax-highlighter";
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import Editor from "@monaco-editor/react";
+import CodeEditor from "@/components/CodeEditor";
+
 export default function Home()
 {
 
-    const [i_js, i_set_js] = useState("js");
-    const [i_css, i_set_css] = useState("css");
-    const [i_html, i_set_html] = useState("html");
+    const [i_js, i_set_js] = useState("// js");
+    const [i_css, i_set_css] = useState("/* css */");
+    const [i_html, i_set_html] = useState("<!-- html -->");
 
     // The iframe reloads if the html is updated, i dont want this
     // I want it to only reload with the deboucne function.
@@ -61,21 +64,7 @@ export default function Home()
 
     return (
         <div className="w-full flex-1 grid md:grid-cols-2 grid-rows-2">
-            <div className="relative">
-                <textarea
-                    value={i_js}
-                    onChange={(e) => set_js(e.target.value)}
-                    className="font-[Menlo] w-full h-full text-white resize-none bg-black outline-none"
-                ></textarea>
-                <div className="pointer-events-none absolute w-full h-full left-0 top-0">
-                    <Prism
-                        showLineNumbers
-                        customStyle={{ opacity: 0.5, padding: 0, margin: 0, fontSize: 16 }} language="js" style={vscDarkPlus}>
-
-                        {i_js}
-                    </Prism>
-                </div>
-            </div>
+            <CodeEditor language="html" onChange={set_html} value={i_html} />
 
             <div className=" ">
                 <iframe
@@ -87,16 +76,8 @@ export default function Home()
 
                 </iframe>
             </div>
-            <textarea
-                value={i_html}
-                onChange={(e) => set_html(e.target.value)}
-                className="w-full h-full resize-none text-white bg-black outline-none"
-            ></textarea>
-            <textarea
-                value={i_css}
-                onChange={(e) => set_css(e.target.value)}
-                className="w-full h-full text-white resize-none bg-black outline-none"
-            ></textarea>
+            <CodeEditor language="javascript" onChange={set_js} value={i_js} />
+            <CodeEditor language="css" onChange={set_css} value={i_css} />
         </div>
 
     );
