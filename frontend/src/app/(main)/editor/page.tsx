@@ -65,7 +65,6 @@ export default function Home()
     return (
         <div className="w-full flex-1 grid md:grid-cols-2 grid-rows-2">
             <CodeEditor language="html" onChange={set_html} value={i_html} />
-
             <div className=" ">
                 <iframe
                     key={key}

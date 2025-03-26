@@ -8,7 +8,10 @@ const required_env_vars =
         "DATABASE_PORT",
         "DATABASE_NAME",
         "PORT",
-        "JSONWEBTOKEN_SECRET"
+        "JSONWEBTOKEN_SECRET",
+        "AWS_ACCESS_KEY_ID",
+        "AWS_SECRET_ACCESS_KEY",
+        "AWS_REGION"
     ];
 
 const validate_envs = () =>
