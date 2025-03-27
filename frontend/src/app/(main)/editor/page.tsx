@@ -5,6 +5,7 @@ import { Prism } from "react-syntax-highlighter";
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import Editor from "@monaco-editor/react";
 import CodeEditor from "@/components/CodeEditor";
+import EditorTabBar from "@/components/editor/EditorTabBar";
 
 export default function Home()
 {
@@ -63,21 +64,23 @@ export default function Home()
     }
 
     return (
-        <div className="w-full flex-1 grid md:grid-cols-2 grid-rows-2">
-            <CodeEditor language="html" onChange={set_html} value={i_html} />
-            <div className=" ">
-                <iframe
-                    key={key}
-                    className="w-full h-full"
-                    srcDoc={i_html}
-                    onLoad={inject_code}
-                >
+        <div className="flex flex-row flex-1 w-full pt-3 box-border">
+            <EditorTabBar />
+            <div className="w-full flex-1 grid md:grid-cols-2 grid-rows-2 gap-2">
+                <CodeEditor language="html" onChange={set_html} value={i_html} />
+                <div className=" ">
+                    <iframe
+                        key={key}
+                        className="w-full h-full"
+                        srcDoc={i_html}
+                        onLoad={inject_code}
+                    >
 
-                </iframe>
+                    </iframe>
+                </div>
+                <CodeEditor language="javascript" onChange={set_js} value={i_js} />
+                <CodeEditor language="css" onChange={set_css} value={i_css} />
             </div>
-            <CodeEditor language="javascript" onChange={set_js} value={i_js} />
-            <CodeEditor language="css" onChange={set_css} value={i_css} />
         </div>
-
     );
 }
