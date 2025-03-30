@@ -14,9 +14,13 @@ CREATE INDEX index_user_email ON tbl_users(user_email);
 CREATE TABLE tbl_posts (
     post_id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
-    post_file_id VARCHAR(32) NULL,
+    post_file_id VARCHAR(36) NULL,
     post_title VARCHAR(96) NOT NULL,
     post_description VARCHAR(256) NOT NULL,
+    post_editable BOOLEAN NOT NULL, /* If this is from the srcbox editor, (data seperate, can be edited) */
+    /* I will not be doing this for this project, but a better method which I would have implemented given time,
+    is to use git as the storage client, this would simplify the fork functionality, versioning (which i originally
+    planned to have), editing, and uploading */
 
     FOREIGN KEY (user_id) REFERENCES tbl_users(user_id) ON DELETE CASCADE
 );

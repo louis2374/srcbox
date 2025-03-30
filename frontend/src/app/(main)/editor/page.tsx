@@ -6,10 +6,11 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import Editor from "@monaco-editor/react";
 import CodeEditor from "@/components/CodeEditor";
 import EditorTabBar from "@/components/editor/EditorTabBar";
+import { api, useToken } from "@/lib/api/api";
+import { Method } from "@srcbox/library";
 
 export default function Home()
 {
-
     const [i_js, i_set_js] = useState("// js");
     const [i_css, i_set_css] = useState("/* css */");
     const [i_html, i_set_html] = useState("<!-- html -->");

@@ -24,9 +24,10 @@ export interface D_Post
     post_file_id: string,
     post_title: string,
     post_description: string,
+    post_editable: boolean,
 
     // User who posted
-    user_name: string
+    user_name: string,
 
     // Count
     comment_count: number,

@@ -22,7 +22,8 @@ export interface DB_Post
     user_id: number,
     post_file_id: string,
     post_title: string,
-    post_description: string
+    post_description: string,
+    post_editable: boolean
 }
 
 export interface DB_Follow
