@@ -14,22 +14,22 @@ interface Props
 const page: React.FC<Props> = async ({ params }) =>
 {
     const { post_id } = await params;
-    console.log({ inside: post_id || "NOT SET" })
     if (!post_id)
     {
         permanentRedirect("/explore")
     }
 
     const token = await getToken();
-
+    console.log(post_id)
     try
     {
         const response = await api("/posts/" + post_id, Method.GET, { token });
         if (response.ok)
         {
+            console.log(response.body)
             const post = response.body as D_Post
             return (
-                <div className='w-full max-w-3xl'>
+                <div className='w-full max-w-3xl px-20 pt-14'>
                     <PostCard post={post} />
                     <Comments post_id={Number(post_id)} />
                 </div>

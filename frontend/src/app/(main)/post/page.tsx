@@ -5,7 +5,7 @@ import { api, useToken } from "@/lib/api/api";
 import { Method } from "@srcbox/library";
 import { useState } from "react";
 
-export default function Home()
+const page = () =>
 {
     const [name, set_name] = useState("");
     const [desc, set_desc] = useState("")
@@ -25,3 +25,5 @@ export default function Home()
         </div>
     );
 }
+
+export default page;

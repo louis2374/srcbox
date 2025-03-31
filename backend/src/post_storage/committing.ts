@@ -20,7 +20,7 @@ export const pre_upload_post = async (p_title: string, p_desc: string, p_user_id
     {
         const uploaded = await db_con("tbl_posts").insert(post).returning<[{ post_id: number }]>("post_id");
 
-        // I high highly doubt this is even possible, but I check it just in case
+        // I highly highly doubt this is even possible, but I check it just in case
         if (!uploaded[0].post_id) throw new Error("Fatal: upload did not fail, however no post id was returned");
 
         // Set the id
@@ -45,7 +45,7 @@ export const pre_upload_post = async (p_title: string, p_desc: string, p_user_id
         // If this failed, remove the post from db
         console.error(e)
 
-        // Delete if this fails then the calling function will catch it. I want to avoid nested try/catch
+        // Delete, if this fails then the calling function will catch it. I want to avoid nested try/catch
         await db_con("tbl_posts").delete().where({ post_id: post.post_id });
 
         throw new Error("Failed to generate upload url")

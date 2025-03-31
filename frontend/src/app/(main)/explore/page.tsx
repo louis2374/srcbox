@@ -4,7 +4,7 @@ import { D_Post, Method } from "@srcbox/library";
 import { useEffect, useRef, useState } from "react";
 import PostCard from "../../../components/PostCard/PostCard";
 
-const Home = () =>
+const page = () =>
 {
     const posts = useRef<Array<D_Post>>([]);
     const [loading, set_loading] = useState(true)
@@ -39,4 +39,4 @@ const Home = () =>
     );
 }
 
-export default Home;
+export default page;

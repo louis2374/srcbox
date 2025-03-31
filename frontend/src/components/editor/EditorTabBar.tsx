@@ -9,7 +9,12 @@ import { Method } from '@srcbox/library';
 import FormInput from '../FormInput';
 import EditorPostUploadBox from './EditorPostUploadBox';
 
-const EditorTabBar = () =>
+interface Props
+{
+    code_content: string
+}
+
+const EditorTabBar: React.FC<Props> = ({ code_content }) =>
 {
     const token = useToken();
     const [post_mode, set_post_mode] = useState(false);
@@ -17,7 +22,7 @@ const EditorTabBar = () =>
     return (
         <div className={join('flex flex-row transition-all', post_mode ? "w-1/4" : "w-48")}>
             <ul className='flex flex-col w-full px-4 h-full'>
-                <EditorPostUploadBox open={post_mode} set_open={set_post_mode} />
+                <EditorPostUploadBox open={post_mode} set_open={set_post_mode} content={code_content} />
                 <li>
                     <SButton
                         className='p-2 hover:bg-neutral-800 w-full text-left'

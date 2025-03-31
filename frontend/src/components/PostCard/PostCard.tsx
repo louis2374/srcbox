@@ -31,7 +31,7 @@ const PostCard: React.FC<Props> = ({ post, viewable }) =>
     }
 
     return (
-        <div className={join('flex flex-col w-full p-4 rounded-lg', viewable && 'hover:bg-backgrounddarker cursor-pointer')}
+        <div className={join('flex flex-col w-full rounded-lg', viewable && 'hover:bg-backgrounddarker cursor-pointer')}
             onClick={() => viewable ? nav.push("/view/" + post.post_id) : undefined}>
             <h2 className='pb-3 text-2xl'>
                 {post?.post_title}

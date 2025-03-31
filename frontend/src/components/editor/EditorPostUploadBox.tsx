@@ -6,6 +6,7 @@ import { Method } from '@srcbox/library'
 import { join } from '@/lib/css'
 import FormInput from '../FormInput'
 import { Modal } from '@mui/material'
+import { useRouter } from 'next/navigation'
 
 interface Props
 {
@@ -16,31 +17,31 @@ interface Props
 
 const EditorPostUploadBox: React.FC<Props> = ({ open, set_open, content }) =>
 {
+    const nav = useRouter();
     const token = useToken();
+    const [load_status, set_load_status] = useState("");
     const [post_title, set_post_title] = useState("");
     const [post_desc, set_post_desc] = useState("");
 
     const pre_upload_post = async () =>
     {
+        set_load_status("Creating post...")
         try
         {
             const { post_id, upload_url } = (await api("/posts", Method.POST, { body: { title: post_title, description: post_desc }, token })).body as any
-            upload_data(upload_url)
+            await upload_data(upload_url)
+            nav.push("/view/" + post_id)
         }
         catch (error)
         {
-
+            set_load_status("Failed to save post")
         }
-
     }
 
     const upload_data = (p_upload_url: string) =>
     {
-        fetch(p_upload_url,
-            {
-                method: "PUT",
-                body: content
-            })
+        set_load_status("Uploading your code...")
+        return fetch(p_upload_url, { method: "PUT", body: content })
     }
 
     return (<>
@@ -48,7 +49,7 @@ const EditorPostUploadBox: React.FC<Props> = ({ open, set_open, content }) =>
             style={{
                 top: '50%',
                 left: '50%',
-            }} open={false}><div>Your code is uploading</div></Modal>
+            }} open={!!load_status}><div>{load_status}</div></Modal>
         {
             open ?
                 <div className='grid grid-cols-2 md:grid-cols-3'>

@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3 } from "./s3";
 
 // Creates a GUID for a file. I could have used postid, but I want to keep a consistent length
@@ -10,7 +10,6 @@ export const post_create_file_id = (): string =>
     return crypto.randomUUID();
 }
 
-// Simulating for now
 export const post_create_upload_url = async (p_file_id: string): Promise<string> =>
 {
     const command = new PutObjectCommand(
@@ -26,10 +25,27 @@ export const post_create_upload_url = async (p_file_id: string): Promise<string>
     return url;
 }
 
-console.log(post_create_file_id().length)
-console.log(post_create_file_id().length)
-console.log(post_create_file_id().length)
-console.log(post_create_file_id().length)
-console.log(post_create_file_id().length)
-console.log(post_create_file_id().length)
-console.log(post_create_file_id().length)
+// Get content
+export const post_get_code = async (p_file_id: string): Promise<string> =>
+{
+    const command = new GetObjectCommand(
+        {
+            Bucket: "srcbox-code",
+            Key: p_file_id
+        });
+
+    try
+    {
+        const content = await s3.send(command);
+        const as_string = content.Body?.transformToString();
+        return as_string || "";
+    }
+
+    catch (e: any)
+    {
+        // If its 404, its not an error. I dislike how amazon set this up
+        // I prefer an error to actually be an error. 404 is not in my opinion.
+        if (e.$metadata.httpStatusCode === 404) return "";
+        else throw e;
+    }
+}

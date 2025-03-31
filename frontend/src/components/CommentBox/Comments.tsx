@@ -69,7 +69,7 @@ const Comment: React.FC<Props> = ({ post_id }) =>
         <div className='flex flex-col gap-6 items-start'>
             <span className='text-xl'>Comments</span>
             <form className='flex flex-row gap-4 w-full flex-1'>
-                <FormInput value={comment} disabled={loading} className='overflow-hidden' placeholder='How did you center that div?' update={(e) => set_comment(e.target.value)} />
+                <FormInput value={comment} disabled={loading} container_ClassName='flex-1' className='overflow-hidden' placeholder='How did you center that div?' update={(e) => set_comment(e.target.value)} />
                 <SButton disabled={comment.length == 0} type='submit' onClick={post_comment}><IoMdSend size={30} /></SButton>
                 <input type="submit" className='hidden' />
             </form>

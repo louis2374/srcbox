@@ -53,12 +53,23 @@ export const api = async (p_path: string, p_method: Method, p_options?: ApiOptio
     {
         options.headers = { ...options.headers || {}, "authorization": "Bearer " + p_options.token }
     }
+    let response: Response;
+    try
+    {
+        response = await fetch(url, options);
+    }
+    catch (e)
+    {
+        console.error(e);
+        throw new Error("could not connect to api server: " + url)
+    }
 
     try
     {
-        const response = await fetch(url, options);
+        const text = await response.text();
 
-        const json = await response.json();
+        // Using the brackets so if text is empty it does not error
+        const json = await JSON.parse(text || "{}");
 
         return {
             status: response.status,
@@ -69,6 +80,6 @@ export const api = async (p_path: string, p_method: Method, p_options?: ApiOptio
     catch (e)
     {
         console.error(e);
-        throw new Error("could not connect to api server: " + url)
+        throw new Error("invalid response: " + url)
     }
 }

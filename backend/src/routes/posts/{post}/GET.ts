@@ -34,6 +34,7 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }
 
             // I add an extra value here, to state whether the caller of this request has liked the post, for ui purposes
             db_con("tbl_likes as likes").count("*").where("likes.post_id", post).andWhere("likes.user_id", p_user.user_id).as("liked"))
+        .where("posts.post_id", post)
         .first<D_Post>()
         .then((dpost) =>
         {
