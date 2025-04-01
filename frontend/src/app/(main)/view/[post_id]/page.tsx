@@ -18,9 +18,8 @@ const page: React.FC<Props> = async ({ params }) =>
     {
         permanentRedirect("/explore")
     }
-
     const token = await getToken();
-    console.log(post_id)
+
     try
     {
         const response = await api("/posts/" + post_id, Method.GET, { token });
