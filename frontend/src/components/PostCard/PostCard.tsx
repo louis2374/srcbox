@@ -40,7 +40,7 @@ const PostCard: React.FC<Props> = ({ post, viewable }) =>
                 }
                 else set_err(data.body.error || "error")
             })
-    })
+    }, [])
 
     const like = (p_like: boolean) =>
     {
