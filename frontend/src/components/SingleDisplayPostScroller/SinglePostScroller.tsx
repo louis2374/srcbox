@@ -12,9 +12,17 @@ const SinglePostScroller = () =>
 
     useEffect(() =>
     {
-        const l = () =>
+        const l = (k: WheelEvent) =>
         {
-            set_id(i => i + 1);
+            if (k.deltaY > 0)
+            {
+                set_id(i => i - 1);
+            }
+            else if (k.deltaY < 0)
+            {
+                set_id(i => i + 1);
+            }
+
             set_post(undefined);
         }
 
@@ -22,7 +30,7 @@ const SinglePostScroller = () =>
 
 
 
-        //  return () => window.removeEventListener("wheel", l);
+        return () => window.removeEventListener("wheel", l);
     }, [])
 
     useEffect(() =>

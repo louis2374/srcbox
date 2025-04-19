@@ -19,13 +19,14 @@
         "backend-dev": "npm run dev --workspace=backend",
         "backend-build": "npm run build --workspace=backend",
         "backend-start": "npm run start --workspace=backend",
+        "backend-init-db": "npm run init-db --workspace=backend",
         "library-dev": "npm run dev --workspace=library",
         "library-build": "npm run build --workspace=library",
         "database-reset": "docker volume rm database_postgres_data",
         "database-stop": "cd database && docker-compose down",
         "database-start": "cd database && docker-compose up",
         "test": "npm run test --workspace=tests",
-        "dev": "concurrently \"npm run frontend-dev\" \"npm run backend-dev\" \"npm run library-dev\" \"npm run database-start\""
+        "dev": "concurrently \"npm run frontend-dev\" \"npm run backend-dev\" \"npm run library-dev\""
     },
     "devDependencies": {
         "concurrently": "^9.1.2"

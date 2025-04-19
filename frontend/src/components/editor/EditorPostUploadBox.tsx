@@ -60,7 +60,8 @@ const EditorPostUploadBox: React.FC<Props> = ({ open, set_open, content }) =>
                         <IoArrowBackOutline size={24} />
                     </SButton>
                     <SButton
-                        className='p-2 w-full bg-accent col-start-2 md:col-start-3 overflow-hidden'
+                        disabled={!post_title || !post_desc}
+                        className='p-2 w-full bg-accent col-start-2 md:col-start-3 overflow-hidden disabled:text-neutral-400 disabled:bg-neutral-800'
                         onClick={pre_upload_post}
                     >
                         Commit

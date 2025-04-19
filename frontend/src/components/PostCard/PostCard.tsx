@@ -57,7 +57,7 @@ const PostCard: React.FC<Props> = ({ post, viewable }) =>
             </h2>
 
             <div className='w-full h-96 bg-neutral-900 border-solid border-black border-4 rounded'>
-                {content && <PostCardContentPlayer content={content} />}
+                {content ? <PostCardContentPlayer content={content} /> : "Loading"}
             </div>
 
             <div className='flex flex-row justify-between gap-2 mt-2 mx-6'>

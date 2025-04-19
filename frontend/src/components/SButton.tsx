@@ -16,7 +16,7 @@ const SButton: React.FC<Props> = ({ disabled, onClick, children, type = "button"
     return (
         <button
             disabled={disabled}
-            className={join(className, "active:translate-y-px", disabled && "pointer-events-none text-neutral-500")}
+            className={join(className, "active:translate-y-px disabled:pointer-events-none")}
             onClick={onClick}
             type={type}
         >{children}</button>
