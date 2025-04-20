@@ -16,11 +16,12 @@ import PostCardContentPlayer from './PostCardContentPlayer';
 interface Props
 {
     post: D_Post,
-    viewable?: boolean, // If clicking routes user to /view/id
-    load_content?: boolean, // If the carad will pull the code and load the iframe
+    load_content?: boolean, // If the carad will pull the code and load the iframe,
+    id?: string,
+    className?: string
 }
 
-const PostCard: React.FC<Props> = ({ post, viewable }) =>
+const PostCard: React.FC<Props> = ({ post, id, className }) =>
 {
     const token = useToken();
     const nav = useRouter();
@@ -49,14 +50,16 @@ const PostCard: React.FC<Props> = ({ post, viewable }) =>
     }
 
     return (
-        <div className={join('flex flex-col w-full rounded-lg', viewable && 'hover:bg-backgrounddarker cursor-pointer')}
-            onClick={() => viewable ? nav.push("/view/" + post.post_id) : undefined}>
+        <div
+            data-id={post.post_id}
+            className={join('flex flex-col w-full rounded-lg', className)}
+            id={id}>
             <h2 className='pb-3 text-2xl'>
                 {post?.post_title}
                 {err}
             </h2>
 
-            <div className='w-full h-96 bg-neutral-900 border-solid border-black border-4 rounded'>
+            <div className='w-full h-full bg-neutral-900 border-solid border-black border-4 rounded'>
                 {content ? <PostCardContentPlayer content={content} /> : "Loading"}
             </div>
 

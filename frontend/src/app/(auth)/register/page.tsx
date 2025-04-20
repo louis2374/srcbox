@@ -96,7 +96,7 @@ const page = () =>
     {
         try
         {
-            const response = await fetch("http://localhost:3000/api/register", {
+            const response = await fetch("/api/register", {
                 body: JSON.stringify({ email: p_email, password: p_password, username: p_username }),
                 method: "POST",
                 headers: {

@@ -9,7 +9,7 @@ import React, { FormEvent, useState } from 'react'
 
 const page = () =>
 {
-    const [email, set_email] = useState("bingus@bingus.com");
+    const [email, set_email] = useState("bingus@gmail.com");
     const [password, set_password] = useState("bingus123");
 
     // Current error
@@ -26,7 +26,7 @@ const page = () =>
     {
         try
         {
-            const response = await fetch("http://localhost:3000/api/login", {
+            const response = await fetch("/api/login", {
                 body: JSON.stringify({ email: p_email, password: p_password }),
                 method: "POST",
                 headers: {
