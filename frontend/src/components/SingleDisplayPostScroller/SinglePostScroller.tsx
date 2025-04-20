@@ -3,12 +3,15 @@ import { api, useToken } from '@/lib/api/api';
 import { D_Post, Method } from '@srcbox/library';
 import React, { useEffect, useState } from 'react'
 import PostCard from '../PostCard/PostCard';
+import PostSplitter from '../PostSplitter';
+import { join } from '@/lib/css';
 
 const SinglePostScroller = () =>
 {
-    const [post, set_post] = useState<D_Post>();
-    const [id, set_id] = useState(1)
+    const [id, set_id] = useState(0)
     const token = useToken();
+
+    const [loaded_posts, set_loaded_posts] = useState<Array<D_Post>>([]);
 
     useEffect(() =>
     {
@@ -22,32 +25,35 @@ const SinglePostScroller = () =>
             {
                 set_id(i => i + 1);
             }
-
-            set_post(undefined);
         }
 
         window.addEventListener("wheel", l);
 
-
-
         return () => window.removeEventListener("wheel", l);
     }, [])
 
+    const load_post = (p_id: number) =>
+    {
+        api("/posts/" + p_id, Method.GET, { token }).then(post =>
+        {
+            // Add it to all posts
+            if (post.ok) set_loaded_posts(p => [...p, post.body as D_Post])
+        })
+            .catch()
+    }
+
     useEffect(() =>
     {
-        console.log({ id })
-        api("/posts/" + id, Method.GET, { token }).then(p =>
-        {
-            if (p.ok) set_post(p.body as D_Post);
-            else console.error(p.body.error)
-        })
-    }, [id])
-
-    if (!post) return "Loading";
+        [0, 1, 2, 3, 4].forEach(load_post);
+    }, [])
 
     return (
         <div>
-            <PostCard post={post} key={post?.post_id} />
+            <div className='flex flex-row gap-4'>{loaded_posts.map(p => (<div key={p.post_id} className={join(p.post_id === id && "text-red-600")}>{p.post_title}</div>))}</div>
+            {
+                loaded_posts[id] &&
+                <PostCard post={loaded_posts[id]} key={loaded_posts[id].post_id} />
+            }
         </div>
     )
 }
