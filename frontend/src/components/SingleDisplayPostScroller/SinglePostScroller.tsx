@@ -22,8 +22,6 @@ const SinglePostScroller: React.FC<Props> = () =>
     const [loaded_posts, set_loaded_posts] = useState<Map<number, D_Post>>(new Map());
     const observer = useRef<IntersectionObserver>(null);
 
-    const post = useMemo(() => (<div />), [])
-
     useEffect(() =>
     {
         observer.current = build_observer();
