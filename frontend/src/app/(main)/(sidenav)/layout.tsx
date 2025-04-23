@@ -19,7 +19,8 @@ interface Props
 const layout: React.FC<Readonly<Props>> = async ({ children }) =>
 {
     return (
-        <section className="flex flex-col flex-1 bg-background items-center">
+        <section className="flex flex-row flex-1 bg-background items-center">
+            <Navbar vertical />
             {children}
         </section>
     )

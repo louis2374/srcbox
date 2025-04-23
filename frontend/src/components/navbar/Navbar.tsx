@@ -21,28 +21,34 @@ const buttons =
         { href: "/featured", label: "Featured", icon: MdLeaderboard },
     ];
 
-const Navbar = () =>
+interface Props
+{
+    vertical?: boolean
+}
+
+const Navbar: React.FC<Props> = ({ vertical }) =>
 {
     const pn = usePathname();
 
     return (
-        <nav className='flex flex-row w-full justify-between h-[80px] sticky left-0 top-0 bg-inherit'>
+        <nav className={join('grid sticky bg-inherit', vertical ? "flex-col h-screen grid-rows-6 w-44" : "flex-row w-screen h-[80px] grid-cols-6")}>
 
             <Link
                 href={"/"}
-                className='p-4 text-3xl'
+                className='p-4 text-3xl text-center flex justify-center items-center'
             >Srcbox</Link>
 
-            <div className='flex flex-row'>
+            <div className={join('flex justify-center items-center', vertical ? "flex-col row-span-4" : "flex-row col-span-4")}>
                 {
                     // Nav buttons
                     buttons.map(({ href, label, icon: Icon }) =>
                     {
-                        const active = pn === href;
+
+                        const active = href.length !== 1 ? pn.startsWith(href) : pn === href
                         return <Link
                             key={label}
                             href={href}
-                            className={join('text-center w-24 py-3 px-1', active && "border-b-4 border-b-accent border-b-solid")}>
+                            className={join('text-center w-24 py-3 px-1', active && (!vertical ? "border-b-4 border-b-accent border-b-solid" : "border-r-4 border-r-accent border-r-solid"))}>
                             <Icon
                                 className='m-auto'
                                 size={35}
