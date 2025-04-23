@@ -22,20 +22,19 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }
 {
     // Pretty big query, basically just grabs a bunch of data and joins it all together
     // Its done in order, and will need to be updated as i modify the posts table (Which I will in the future)
-    db_con("tbl_posts as posts")
+    db_con("tbl_posts")
         .select(
-            "posts.*",
+            "tbl_posts.*",
             // Need to use whereRaw, as the usual .where() does not allow string as second param
-            db_con("tbl_users as users").select("users.user_name").whereRaw("users.user_id = posts.user_id").as("user_name").first(),
+            db_con("tbl_users").select("tbl_users.user_name").whereRaw("tbl_users.user_id = tbl_posts.user_id").as("user_name").first(),
 
             // Count number of likes and comments
-            db_con("tbl_comments as comments").count("*").where("comments.post_id", post).as("comment_count"),
-            db_con("tbl_likes as likes").count("*").where("likes.post_id", post).as("like_count"),
+            db_con("tbl_comments").count("*").where("tbl_comments.post_id", post).as("comment_count"),
+            db_con("tbl_likes").count("*").where("tbl_likes.post_id", post).as("like_count"),
 
             // I add an extra value here, to state whether the caller of this request has liked the post, for ui purposes
-            db_con("tbl_likes").where("post_id", post).andWhere("user_id", p_user.user_id).select(db_con.raw("1")).limit(1).as("liked")
-        )
-        .where("posts.post_id", post)
+            db_con("tbl_likes").where("post_id", post).andWhere("user_id", p_user.user_id).select(db_con.raw("1")).limit(1).as("liked"))
+        .where("tbl_posts.post_id", post)
         .first<D_Post>()
         .then((dpost) =>
         {

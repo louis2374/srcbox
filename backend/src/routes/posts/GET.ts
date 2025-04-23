@@ -27,14 +27,14 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { url: { offset, l
     // Its done in order, and will need to be updated as i modify the posts table (Which I will in the future)
     // Pretty big query, basically just grabs a bunch of data and joins it all together
     // Its done in order, and will need to be updated as i modify the posts table (Which I will in the future)
-    const query = db_con("tbl_posts as posts")
+    db_con("tbl_posts")
         .select(
-            "posts.*",
+            "tbl_posts.*",
             // Need to use whereRaw, as the usual .where() does not allow string as second param
-            db_con("tbl_users as users").select("users.user_name").whereRaw("users.user_id = posts.user_id").as("user_name").first(),
-            db_con("tbl_comments as comments").count("*").whereRaw("comments.post_id = posts.post_id").as("comment_count"),
-            db_con("tbl_likes as likes").count("*").whereRaw("likes.post_id = posts.post_id").as("like_count"),
-            db_con("tbl_likes as likes").count("*").whereRaw("likes.post_id = posts.post_id AND likes.user_id = ?", [p_user.user_id]).as("liked"))
+            db_con("tbl_users").select("tbl_users.user_name").whereRaw("tbl_users.user_id = tbl_posts.user_id").as("user_name").first(),
+            db_con("tbl_comments").count("*").whereRaw("tbl_comments.post_id = tbl_posts.post_id").as("comment_count"),
+            db_con("tbl_likes").count("*").whereRaw("tbl_likes.post_id = tbl_posts.post_id").as("like_count"),
+            db_con("tbl_likes").whereRaw("tbl_likes.post_id = tbl_posts.post_id AND tbl_likes.user_id = ?", [p_user.user_id]).select(db_con.raw("1")).limit(1).as("liked"))
         .limit(limit || MAX_RETURN_COUNT)
         .offset(offset || 0)
         .then((posts) =>

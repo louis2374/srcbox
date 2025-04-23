@@ -16,7 +16,7 @@ interface Props
 
 const SinglePostScroller: React.FC<Props> = () =>
 {
-    const history = useRouter();
+
     const token = useToken();
     const scroll_container = useRef<HTMLDivElement>(null);
     const [loaded_posts, set_loaded_posts] = useState<Map<number, D_Post>>(new Map());
@@ -25,13 +25,6 @@ const SinglePostScroller: React.FC<Props> = () =>
     useEffect(() =>
     {
         observer.current = build_observer();
-
-        const scrolled = () =>
-        {
-
-        }
-
-        window.addEventListener("wheel", scrolled);
 
         return () => observer.current?.disconnect();
     }, []);
