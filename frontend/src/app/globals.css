@@ -49,3 +49,12 @@ body {
     scrollbar-width: thin;
     scrollbar-color: var(--accent) var(--background);
 }
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

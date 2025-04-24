@@ -4,7 +4,7 @@ import { useCookies } from "next-client-cookies"
 export interface ApiOptions
 {
     query_params?: Record<string, string>,
-    body?: Record<string, string>,
+    body?: Record<string, any>,
     token?: string
 }
 

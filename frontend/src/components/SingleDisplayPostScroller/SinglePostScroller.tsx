@@ -14,25 +14,45 @@ interface Props
     top?: number // The top/starting post, if undefined will be random
 }
 
+const page_size = 5;
+
 const SinglePostScroller: React.FC<Props> = () =>
 {
-
     const token = useToken();
     const scroll_container = useRef<HTMLDivElement>(null);
-    const [loaded_posts, set_loaded_posts] = useState<Map<number, D_Post>>(new Map());
+    const [loaded_posts, set_loaded_posts] = useState<Array<D_Post>>([]);
     const observer = useRef<IntersectionObserver>(null);
+    const offset = useRef(0);
+    const loading_posts = useRef(false);
 
     useEffect(() =>
     {
         observer.current = build_observer();
 
-        return () => observer.current?.disconnect();
+        const scrolled = () =>
+        {
+            const s = scroll_container.current!;
+            const bottom_distance = s.scrollHeight - s.scrollTop - s.clientHeight; // Distance from bottom
+
+            // Multiply client height to add a little leeway
+            if (bottom_distance < s.clientHeight * page_size * 1.1) load_new_posts();
+        }
+
+        document.addEventListener("wheel", scrolled);
+
+        // Trigger load immediately
+        scrolled();
+
+        return () => 
+        {
+            document.removeEventListener("wheel", scrolled);
+            observer.current?.disconnect();
+        }
     }, []);
 
     useEffect(() =>
     {
         if (!observer.current || !scroll_container.current) return;
-
 
         // Empty it
         observer.current.disconnect();
@@ -40,6 +60,39 @@ const SinglePostScroller: React.FC<Props> = () =>
         // Add all posts
         Array.from(scroll_container.current.children).forEach(observer.current.observe.bind(observer.current));
     }, [loaded_posts])
+
+    const load_new_posts = () =>
+    {
+        if (loading_posts.current) return;
+        console.log("LOADING")
+        loading_posts.current = true;
+        api("/posts", Method.GET, { token, query_params: { offset: offset.current + "", limit: page_size + "" } })
+            .then((response) =>
+            {
+                if (!response.ok) 
+                {
+                    console.error(response.body.error);
+                    return;
+                }
+
+                const posts = response.body as Array<D_Post>;
+
+                posts.forEach(post =>
+                {
+                    // Occasionally when using back arrows posts would be duplicated
+                    // This fixes it. Not that big of a deal, I know this is n squared,
+                    // however the list will never be that large, and its very quick to loop through
+                    if (!loaded_posts.find(p => p.post_id === post.post_id))
+                    {
+                        set_loaded_posts(prev => [...prev, post]);
+                    }
+                });
+                offset.current = offset.current + posts.length;
+            })
+
+            // Minimum time between loads is 3s
+            .finally(() => setTimeout(() => loading_posts.current = false, 2000))
+    }
 
     const build_observer = () =>
     {
@@ -67,31 +120,17 @@ const SinglePostScroller: React.FC<Props> = () =>
         window.history.replaceState(null, '', url);
     }
 
-    const load_post = (p_id: number) =>
-    {
-        api("/posts/" + p_id, Method.GET, { token })
-            .then(post =>
-            {
-                // Add it to all posts
-                if (post.ok)
-                {
-                    const p = post.body as D_Post;
-                    loaded_posts.set(p.post_id, p);
-                    set_loaded_posts(new Map(loaded_posts));
-                }
-            })
-            .catch()
-    }
+
 
     useEffect(() =>
     {
-        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach(load_post);
+        load_new_posts();
     }, [])
 
     return (
         <div ref={scroll_container}
-            className='flex flex-col overflow-scroll overflow-x-hidden snap-mandatory snap-y h-screen items-center'>
-            {[...loaded_posts.values()].map(p => (<PostCard className=' max-w-3xl min-h-[100vh] py-20 justify-center snap-center' key={p.post_id} post={p} />))}
+            className='flex flex-col overflow-scroll overflow-x-hidden snap-mandatory snap-y h-screen items-center no-scrollbar'>
+            {loaded_posts.map(p => (<PostCard className=' max-w-3xl min-h-[100vh] py-20 justify-center snap-center' key={p.post_id} post={p} />))}
         </div>
     )
 }

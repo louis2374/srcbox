@@ -20,7 +20,7 @@ export interface ValidationData
 // Helper funcs to check types
 const is_string = (p_test: any) => typeof p_test === "string";
 const is_bool = (p_test: any) => [true, false, "true", "false"].includes(p_test);
-const is_num = (p_test: any) => !!Number(p_test);
+const is_num = (p_test: any) => !isNaN(p_test);
 
 const is = (p_test: any, p_type: Prim): PrimTS | undefined =>
 {
@@ -91,7 +91,7 @@ export const check_params_valid = (p_requested: DocRouteParams, p_req: Request):
                 if (param.required && !exists) data.missing.body.push(param);
 
                 // If the param exists, but is the wrong type
-                else if (exists && !is(p_req.body[param.name], param.type)) data.invalid.body.push(param);
+                else if (exists && is(p_req.body[param.name], param.type) === undefined) data.invalid.body.push(param);
             });
         }
     }
@@ -107,7 +107,7 @@ export const check_params_valid = (p_requested: DocRouteParams, p_req: Request):
             if (param.required && !exists) data.missing.path.push(param);
 
             // If the param exists, but is the wrong type
-            else if (exists && !is(p_req.params[param.name], param.type)) data.invalid.path.push(param);
+            else if (exists && is(p_req.params[param.name], param.type) === undefined) data.invalid.path.push(param);
         });
     }
 
@@ -122,7 +122,7 @@ export const check_params_valid = (p_requested: DocRouteParams, p_req: Request):
             if (param.required && !exists) data.missing.url.push(param);
 
             // If the param exists, but is the wrong type
-            else if (exists && !is(p_req.query[param.name], param.type)) data.invalid.url.push(param);
+            else if (exists && is(p_req.query[param.name], param.type) === undefined) data.invalid.url.push(param);
         });
     }
 
@@ -152,8 +152,8 @@ export const construct_params = (p_requested: DocRouteParams, p_req: Request): H
         p_requested.body.forEach(param => 
         {
             const parsed = is(p_req.body[param.name], param.type);
-            if (!parsed && param.required) throw new Error("Param construction failed");
-            if (parsed) constructed.body![param.name] = parsed;
+            if (parsed === undefined && param.required) throw new Error("Param construction failed");
+            if (parsed !== undefined) constructed.body![param.name] = parsed;
         })
     }
 
@@ -163,8 +163,8 @@ export const construct_params = (p_requested: DocRouteParams, p_req: Request): H
         p_requested.path.forEach(param => 
         {
             const parsed = is(p_req.params[param.name], param.type);
-            if (!parsed && param.required) throw new Error("Param construction failed");
-            if (parsed) constructed.path![param.name] = parsed;
+            if (parsed === undefined && param.required) throw new Error("Param construction failed");
+            if (parsed !== undefined) constructed.path![param.name] = parsed;
         })
     }
 
@@ -174,8 +174,8 @@ export const construct_params = (p_requested: DocRouteParams, p_req: Request): H
         p_requested.url.forEach(param => 
         {
             const parsed = is(p_req.query[param.name], param.type);
-            if (!parsed && param.required) throw new Error("Param construction failed");
-            if (parsed) constructed.url![param.name] = parsed;
+            if (parsed === undefined && param.required) throw new Error("Param construction failed");
+            if (parsed !== undefined) constructed.url![param.name] = parsed;
         })
     }
 

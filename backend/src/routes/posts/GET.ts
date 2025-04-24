@@ -34,7 +34,8 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { url: { offset, l
             db_con("tbl_users").select("tbl_users.user_name").whereRaw("tbl_users.user_id = tbl_posts.user_id").as("user_name").first(),
             db_con("tbl_comments").count("*").whereRaw("tbl_comments.post_id = tbl_posts.post_id").as("comment_count"),
             db_con("tbl_likes").count("*").whereRaw("tbl_likes.post_id = tbl_posts.post_id").as("like_count"),
-            db_con("tbl_likes").whereRaw("tbl_likes.post_id = tbl_posts.post_id AND tbl_likes.user_id = ?", [p_user.user_id]).select(db_con.raw("1")).limit(1).as("liked"))
+            db_con("tbl_likes").whereRaw("tbl_likes.post_id = tbl_posts.post_id AND tbl_likes.user_id = ?", [p_user.user_id]).select(db_con.raw("1")).limit(1).as("liked"),
+        )
         .limit(limit || MAX_RETURN_COUNT)
         .offset(offset || 0)
         .then((posts) =>
