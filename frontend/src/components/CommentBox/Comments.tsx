@@ -12,7 +12,7 @@ interface Props
     post_id: number,
 }
 
-const Comment: React.FC<Props> = ({ post_id }) =>
+const Comments: React.FC<Props> = ({ post_id }) =>
 {
     console.log({ wtf: post_id || "OK" })
     const token = useToken();
@@ -66,10 +66,10 @@ const Comment: React.FC<Props> = ({ post_id }) =>
     }, [])
 
     return (
-        <div className='flex flex-col gap-6 items-start'>
+        <div className='flex flex-col flex-[0.7] max-w-[500px] gap-6 items-start min-w'>
             <span className='text-xl'>Comments</span>
-            <form className='flex flex-row gap-4 w-full flex-1'>
-                <FormInput value={comment} disabled={loading} container_ClassName='flex-1' className='overflow-hidden' placeholder='How did you center that div?' update={(e) => set_comment(e.target.value)} />
+            <form className='flex flex-row gap-4 w-full'>
+                <FormInput value={comment} disabled={loading} container_ClassName='flex-1' className='overflow-hidden' placeholder='Howd you center the div?' update={(e) => set_comment(e.target.value)} />
                 <SButton disabled={comment.length == 0} type='submit' onClick={post_comment}><IoMdSend size={30} /></SButton>
                 <input type="submit" className='hidden' />
             </form>
@@ -82,4 +82,4 @@ const Comment: React.FC<Props> = ({ post_id }) =>
     )
 }
 
-export default Comment
+export default Comments;

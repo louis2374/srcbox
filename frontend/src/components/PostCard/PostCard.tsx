@@ -18,10 +18,11 @@ interface Props
     post: D_Post,
     load_content?: boolean, // If the carad will pull the code and load the iframe,
     id?: string,
-    className?: string
+    className?: string,
+    button_pressed?: (p_button: string) => void
 }
 
-const PostCard: React.FC<Props> = ({ post, id, className }) =>
+const PostCard: React.FC<Props> = ({ post, id, className, button_pressed }) =>
 {
     const token = useToken();
     const nav = useRouter();
@@ -77,7 +78,7 @@ const PostCard: React.FC<Props> = ({ post, id, className }) =>
                 >
                     {readable_i(post.like_count - (Number(post.liked) - Number(liked)))}
                 </PostCardButton>
-                <PostCardButton tooltip='Comment' Icon={BiComment}>{post.comment_count}</PostCardButton>
+                <PostCardButton tooltip='Comment' onClick={() => button_pressed ? button_pressed("comment") : false} Icon={BiComment}>{post.comment_count}</PostCardButton>
                 <PostCardButton tooltip='Fork' Icon={PiGitForkBold}>{post.comment_count}</PostCardButton>
                 <PostCardButton tooltip='Open in editor' Icon={FaCode} icon_size_override={23} onClick={() => nav.push("/editor/" + post.post_id)}></PostCardButton>
                 <PostCardButton tooltip='Run' Icon={PiPlayBold}>{readable_i(12)}</PostCardButton>

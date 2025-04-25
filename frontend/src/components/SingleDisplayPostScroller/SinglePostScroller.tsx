@@ -8,6 +8,7 @@ import { join } from '@/lib/css';
 import { debounce } from '@/lib/util';
 import { useRouter } from 'next/navigation';
 import { NavigateOptions } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import Comments from '../CommentBox/Comments';
 
 interface Props
 {
@@ -24,6 +25,7 @@ const SinglePostScroller: React.FC<Props> = () =>
     const observer = useRef<IntersectionObserver>(null);
     const offset = useRef(0);
     const loading_posts = useRef(false);
+    const [show_comments, set_show_comments] = useState(false);
 
     useEffect(() =>
     {
@@ -130,7 +132,14 @@ const SinglePostScroller: React.FC<Props> = () =>
     return (
         <div ref={scroll_container}
             className='flex flex-col overflow-scroll overflow-x-hidden snap-mandatory snap-y h-screen items-center no-scrollbar'>
-            {loaded_posts.map(p => (<PostCard className=' max-w-3xl min-h-[100vh] py-20 justify-center snap-center' key={p.post_id} post={p} />))}
+            {loaded_posts.map(p => (
+                <div
+                    key={p.post_id}
+                    className='flex flex-row w-full min-h-[100vh] py-20 justify-center snap-center gap-8 px-10'
+                >
+                    <PostCard button_pressed={(b) => b == "comment" ? set_show_comments(!show_comments) : ""} className=' max-w-3xl justify-center snap-center' post={p} />
+                    {show_comments && <Comments post_id={p.post_id} />}
+                </div>))}
         </div>
     )
 }
