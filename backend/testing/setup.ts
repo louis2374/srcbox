@@ -25,6 +25,11 @@ const setup = async () =>
                 shell: true,
             });
 
+        serv.on("error", (e) =>
+        {
+            console.log(e);
+        })
+
         const pid = serv.pid;
 
         console.log({ pid });

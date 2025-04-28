@@ -18,7 +18,7 @@ export interface ValidationData
 }
 
 // Helper funcs to check types
-const is_string = (p_test: any) => typeof p_test === "string";
+const is_string = (p_test: any) => typeof p_test === "string" && p_test.length > 0;
 const is_bool = (p_test: any) => [true, false, "true", "false"].includes(p_test);
 const is_num = (p_test: any) => !isNaN(p_test);
 
@@ -48,10 +48,10 @@ const is = (p_test: any, p_type: Prim): PrimTS | undefined =>
             }
             else break;
         default:
-            return false;
+            return undefined;
     }
 
-    return false;
+    return undefined;
 }
 
 // Returns a list of missing and invalid params

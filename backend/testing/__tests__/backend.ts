@@ -1,9 +1,21 @@
 import { Http } from "@srcbox/library";
 import { api } from "../util";
 
+
+// 
+//
+// All these tests have to be in one file, as jest does not allow me to define the order
+// in which files are run. And most tests require the user register to have run for auth
+//
+//
+
+
 const EMAIL = "bingus@gmail.com";
 const PASSWORD = "bingus";
 const USERNAME = "bingus";
+const TITLE = "cool_post";
+const DESCRIPTION = "cool_description"
+let token: string = "";
 
 describe("user register flow", () =>
 {
@@ -30,8 +42,6 @@ describe("user register flow", () =>
 
         expect(out.ok).toBeTruthy();
     });
-
-    let token = "";
 
     it("should return login token", async () =>
     {
@@ -134,7 +144,6 @@ describe("registration validation", () =>
                     "Content-Type": "application/json"
                 }
             });
-        console.log(out.status)
 
         expect(out.status).toBe(Http.BAD_REQUEST);
     });
@@ -155,7 +164,6 @@ describe("registration validation", () =>
                     "Content-Type": "application/json"
                 }
             });
-        console.log(out.status)
 
         expect(out.status).toBe(Http.BAD_REQUEST);
     });
@@ -177,8 +185,7 @@ describe("registration validation", () =>
                 }
             });
 
-        console.log(out.status)
-        expect(out.status).toBe(Http.CONFLICT);
+        expect(out.status).toBe(Http.BAD_REQUEST);
     });
 });
 
@@ -274,7 +281,7 @@ describe("credential validation", () =>
                 }
             });
 
-        expect(out.status).toBe(Http.UNAUTHORIZED);
+        expect(out.status).toBe(Http.BAD_REQUEST);
     });
 
     it("should not authorize empty password", async () =>
@@ -293,6 +300,39 @@ describe("credential validation", () =>
                 }
             });
 
-        expect(out.status).toBe(Http.UNAUTHORIZED);
+        expect(out.status).toBe(Http.BAD_REQUEST);
     });
+})
+
+
+describe("creating posts", () =>
+{
+    it("should create a post", async () =>
+    {
+        const out = await fetch(api("/posts"),
+            {
+                method: "POST",
+                body: JSON.stringify(
+                    {
+                        title: TITLE,
+                        description: DESCRIPTION
+                    }),
+                headers:
+                {
+                    "Content-Type": "application/json",
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        const json = await out.json();
+
+        expect(out.status).toBe(Http.CREATED);
+        expect(json.post_id).toBe(1);
+        expect(json.upload_url).toBeTruthy();
+    })
+
+    it("should upload a posts code", async () =>
+    {// TODO
+        expect(false).toBe(true);
+    })
 })

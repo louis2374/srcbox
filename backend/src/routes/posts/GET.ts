@@ -10,6 +10,7 @@ import { db_con } from "../../database/connection";
 import { post_create_upload_url } from "../../post_storage/storage";
 import { param_validator_max_count } from "../../route_validators/generic";
 import { MAX_RETURN_COUNT } from "../../consts";
+import { post_get_all_names } from "../../database/interface/post";
 
 interface Params
 {
@@ -22,6 +23,9 @@ interface Params
 
 const handler: HandlerFunctionAuth<Params> = async (req, res, { url: { offset, limit } }, p_user) =>
 {
+
+    post_get_all_names();
+
     // Add it to the db
     // Pretty big query, basically just grabs a bunch of data and joins it all together
     // Its done in order, and will need to be updated as i modify the posts table (Which I will in the future)
@@ -59,5 +63,6 @@ export default docroute()
     .handler(handler)
     .parameter("url", "limit", "number", false, param_validator_max_count)
     .parameter("url", "offset", "number", false)
+    .parameter("url", "search", "string", false)
     .authoriser(route_jwt_authoriser)
     .build();
