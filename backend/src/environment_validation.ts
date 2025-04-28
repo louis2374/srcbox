@@ -27,12 +27,13 @@ const validate_envs = () =>
     });
 }
 
-export const validate_environment = () =>
+export const validate_environment = (test_mode: boolean = false) =>
 {
+    console.log(test_mode)
     // Only matters in dev (purely loading the .env)
     if (process.env.NODE_ENV !== 'production')
     {
-        const loaded_env = dotenv.config();
+        const loaded_env = dotenv.config({ path: test_mode ? ".env-tests" : ".env" });
 
         // Failed to load env in dev mode
         if (loaded_env.error)

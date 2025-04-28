@@ -1,0 +1,1 @@
+export const api = (p_extra: string = "") => "http://localhost:4000" + p_extra; 

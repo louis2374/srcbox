@@ -1,16 +1,13 @@
 version: '3.8'
 services:
-  srcbox:
+  srcbox-test-db:
     build: .
-    container_name: postgres-database
+    container_name: srcbox-temp-db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: database
     ports:
-      - "5444:5432" # Maps the port of the database to 5444 on the host
+      - "5564:5432" # Maps the port of the database to 5444 on the host, I always forget which way round it is
     volumes:
-      - postgres_data:/var/lib/postgresql/data
       - ./init:/docker-entrypoint-initdb.d
-volumes:
-  postgres_data:

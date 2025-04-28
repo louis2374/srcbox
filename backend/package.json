@@ -3,10 +3,11 @@
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
+        "test": "jest",
         "dev": "nodemon",
         "build": "tsc -p .",
         "start": "node dist/index.js",
+        "start-test": "ts-node ./src/index_test.ts",
         "init-db": "ts-node src/database/init.ts"
     },
     "author": "",
@@ -26,11 +27,17 @@
     "devDependencies": {
         "@types/cors": "^2.8.17",
         "@types/express": "^5.0.0",
+        "@types/jest": "^29.5.14",
         "@types/jsonwebtoken": "^9.0.9",
         "@types/knex": "^0.16.1",
         "@types/pg": "^8.11.11",
+        "@types/ps-tree": "^1.1.6",
+        "docker-compose": "^1.2.0",
         "dotenv": "^16.4.7",
+        "jest": "^29.7.0",
         "nodemon": "^3.1.9",
+        "ps-tree": "^1.2.0",
+        "ts-jest": "^29.3.2",
         "ts-node": "^10.9.2",
         "typescript": "^5.7.3"
     }
