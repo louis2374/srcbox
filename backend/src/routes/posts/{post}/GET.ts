@@ -1,4 +1,4 @@
-import { D_Post, DB_Post, Http, StdAPIErrors } from "@srcbox/library";
+import { D_Comment, D_Post, DB_Comment, DB_Post, Http, StdAPIErrors } from "@srcbox/library";
 import { db_get_user_by_email } from "../../../database/interface/user";
 import { docroute } from "../../../router/route_builder";
 import { HandlerFunction, HandlerFunctionAuth } from "../../../router/route_types";
@@ -38,7 +38,21 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }
         .first<D_Post>()
         .then((dpost) =>
         {
-            std_response(res, { ...dpost, liked: dpost.liked ? true : false }, Http.OK);
+            const send: D_Post =
+            {
+                post_id: dpost.post_id,
+                user_id: dpost.user_id,
+                post_file_id: dpost.post_file_id,
+                post_title: dpost.post_title,
+                post_description: dpost.post_description,
+                post_editable: dpost.post_editable,
+                user_name: dpost.user_name,
+                comment_count: Number(dpost.comment_count),
+                like_count: Number(dpost.like_count),
+                liked: !!dpost.liked
+            }
+            dpost.comment_count = Number(dpost.comment_count)
+            std_response(res, send, Http.OK);
         })
         .catch(() =>
         {

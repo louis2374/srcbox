@@ -16,8 +16,14 @@ const USERNAME = "bingus";
 const TITLE = "cool_post";
 const DESCRIPTION = "cool_description"
 let token: string = "";
+const HTML = `<div>hello</div><div id="bingus"></div>`;
+const CSS = `div {background-color: red}`;
+const JS = `document.getElementById("bingus").innerHTML = "world"`;
+const COMMENT = "what a cool comment";
+const COMMENT2 = "what a terrible comment";
+const COMMENT3 = "what an insane comment";
 
-describe("user register flow", () =>
+describe("registration", () =>
 {
     it("should create an account", async () =>
     {
@@ -74,7 +80,7 @@ describe("user register flow", () =>
                 headers:
                 {
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer " + token
+                    "authorization": "Bearer " + token
                 }
             });
 
@@ -302,11 +308,56 @@ describe("credential validation", () =>
 
         expect(out.status).toBe(Http.BAD_REQUEST);
     });
-})
+});
 
+describe("authorization", () =>
+{
+    it("should accept valid login token", async () =>
+    {
+        const out = await fetch(api("/posts"),
+            {
+                headers:
+                {
+                    "Content-Type": "application/json",
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.OK);
+    });
+
+    it("should not accept missing login token", async () =>
+    {
+        const out = await fetch(api("/posts"),
+            {
+                headers:
+                {
+                    "Content-Type": "application/json"
+                }
+            });
+
+        expect(out.status).toBe(Http.UNAUTHORIZED);
+    });
+
+    it("should not accept invalid login token", async () =>
+    {
+        const out = await fetch(api("/posts"),
+            {
+                headers:
+                {
+                    "Content-Type": "application/json",
+                    "authorization": "Bearer " + "abc123abc123abc123abc123"
+                }
+            });
+
+        expect(out.status).toBe(Http.UNAUTHORIZED);
+    });
+})
 
 describe("creating posts", () =>
 {
+    let upload_url: string;
+
     it("should create a post", async () =>
     {
         const out = await fetch(api("/posts"),
@@ -328,11 +379,390 @@ describe("creating posts", () =>
 
         expect(out.status).toBe(Http.CREATED);
         expect(json.post_id).toBe(1);
-        expect(json.upload_url).toBeTruthy();
-    })
+
+        // Used in next test
+        upload_url = json.upload_url;
+    });
+
+    it("should return an upload url", () =>
+    {
+        expect(upload_url).toBeTruthy();
+    });
 
     it("should upload a posts code", async () =>
-    {// TODO
-        expect(false).toBe(true);
-    })
-})
+    {
+        const code = JSON.stringify({ html: HTML, css: CSS, js: JS })
+
+        const out = await fetch(upload_url,
+            {
+                method: "PUT",
+                body: code,
+            });
+
+        expect(out.status).toBe(Http.OK);
+    });
+
+    let fetched_html: string, fetched_css: string, fetched_js: string;
+
+    it("should fetch uploaded posts code", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1 + "/code"),
+            {
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        const json = await out.json();
+        fetched_css = json.css;
+        fetched_html = json.html;
+        fetched_js = json.js;
+
+        expect(out.status).toBe(Http.OK);
+    });
+
+    it("should return original posts matching title and description", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1),
+            {
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        const json = await out.json();
+
+        expect(out.status).toBe(Http.OK);
+        expect(json.post_title).toBe(TITLE);
+        expect(json.post_description).toBe(DESCRIPTION);
+    });
+
+    it("should match the original uploaded code", () =>
+    {
+        expect(fetched_html).toBe(HTML);
+        expect(fetched_css).toBe(CSS);
+        expect(fetched_js).toBe(JS);
+    });
+
+    it("should return not found for invalid id (code)", async () =>
+    {
+        const out = await fetch(api("/posts/" + 7654 + "/code"),
+            {
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.NOT_FOUND);
+    });
+
+    it("should return not found for invalid id (post)", async () =>
+    {
+        const out = await fetch(api("/posts/" + 7654),
+            {
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.NOT_FOUND);
+    });
+});
+
+describe("liking posts", () =>
+{
+    it("should accept the like request", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1 + "/like"),
+            {
+                method: "POST",
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.OK);
+    });
+
+    it("should be idempotent for liking (ignore duplicates, not change)", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1 + "/like"),
+            {
+                method: "POST",
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.OK);
+    });
+
+    it("should now have one like", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1 + "/likes"),
+            {
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        const json = await out.json();
+
+        expect(out.status).toBe(Http.OK);
+        expect(json.likes).toBe(1);
+    });
+
+    it("should accept the unlike request", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1 + "/like"),
+            {
+                method: "DELETE",
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.OK);
+    });
+
+    it("should be idempotent for unliking", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1 + "/like"),
+            {
+                method: "DELETE",
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.OK);
+    });
+
+    it("should now have no likes", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1 + "/likes"),
+            {
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        const json = await out.json();
+
+        expect(out.status).toBe(Http.OK);
+        expect(json.likes).toBe(0);
+    });
+
+    it("should not like an invalid post", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1876 + "/like"),
+            {
+                method: "POST",
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.NOT_FOUND);
+    });
+
+    it("should not unlike an invalid post", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1876 + "/like"),
+            {
+                method: "DELETE",
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.NOT_FOUND);
+    });
+
+    it("should not return likes for invalid post", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1876 + "/likes"),
+            {
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.NOT_FOUND);
+    });
+});
+
+describe("commenting on a post", () =>
+{
+    it("should accept the comment request", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1 + "/comments"),
+            {
+                method: "POST",
+                body: JSON.stringify({ text: COMMENT }),
+                headers:
+                {
+                    "Content-Type": "application/json",
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.OK);
+    });
+
+    it("should accept another comment request", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1 + "/comments"),
+            {
+                method: "POST",
+                body: JSON.stringify({ text: COMMENT2 }),
+                headers:
+                {
+                    "Content-Type": "application/json",
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.OK);
+    });
+
+    it("should have two comments", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1),
+            {
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.OK);
+
+        const json = await out.json();
+
+        expect(json.comment_count).toBe(2);
+    });
+
+    let comment_1: string, comment_2: string;
+
+    it("should fetch the comments", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1 + "/comments"),
+            {
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.OK);
+
+        const json = await out.json();
+
+        comment_1 = json[0].comment_text;
+        comment_2 = json[1].comment_text;
+    });
+
+    it("should match the original comments", async () =>
+    {
+        expect(comment_1).toBe(COMMENT);
+        expect(comment_2).toBe(COMMENT2);
+    });
+
+    it("should not accept the comment request on invalid post", async () =>
+    {
+        const out = await fetch(api("/posts/" + 18769 + "/comments"),
+            {
+                method: "POST",
+                body: JSON.stringify({ text: COMMENT }),
+                headers:
+                {
+                    "Content-Type": "application/json",
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.NOT_FOUND);
+    });
+
+    it("accept comment delete request", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1 + "/comments/" + 1),
+            {
+                method: "DELETE",
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.OK);
+    });
+
+    it("should only have one comment left", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1),
+            {
+                method: "GET",
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.OK);
+
+        const json = await out.json();
+
+        expect(json.comment_count).toBe(1);
+    });
+
+    it("should accept the patch request", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1 + "/comments/" + 2),
+            {
+                method: "PATCH",
+                body: JSON.stringify({ text: COMMENT3 }),
+                headers:
+                {
+                    "Content-Type": "application/json",
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        const json = await out.json();
+
+        expect(out.status).toBe(Http.OK);
+    });
+
+    it("should now have updated the comment", async () =>
+    {
+        const out = await fetch(api("/posts/" + 1 + "/comments"),
+            {
+                method: "GET",
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.OK);
+
+        const json = await out.json();
+
+        expect(json[0].comment_text).toBe(COMMENT3);
+    });
+});

@@ -24,7 +24,7 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post, co
     };
 
     db_con("tbl_comments").where(delete_comment).delete()
-        .then(() =>
+        .then((o) =>
         {
             std_response(res, {}, Http.OK);
         })

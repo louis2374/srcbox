@@ -16,10 +16,10 @@ interface Params
 
 const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post } }, p_user) =>
 {
-    db_con("tbl_likes").where({ post_id: post }).count<[{ count: number }]>("*")
+    db_con("tbl_likes").where({ post_id: post }).count<[{ count: string }]>("*")
         .then(([{ count }]) =>
         {
-            std_response(res, { likes: count }, Http.OK);
+            std_response(res, { likes: +count }, Http.OK);
         })
         .catch(() =>
         {

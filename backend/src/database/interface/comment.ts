@@ -7,7 +7,7 @@ export const comment_get_by_id = async (p_id: number): Promise<DB_Comment | unde
     try
     {
         // Get the first instance of a comment
-        const comment = await db_con("tbl_comments").where({ post_id: p_id }).select("*").first<DB_Comment | undefined>();
+        const comment = await db_con("tbl_comments").where({ comment_id: p_id }).select("*").first<DB_Comment | undefined>();
 
         return comment;
     }

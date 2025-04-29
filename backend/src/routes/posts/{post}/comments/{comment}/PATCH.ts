@@ -37,6 +37,7 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { post, co
     db_con("tbl_comments").where(find_comment).update(update_comment)
         .then(() =>
         {
+
             std_response(res, {}, Http.OK);
         })
         .catch((e) =>
