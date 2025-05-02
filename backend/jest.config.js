@@ -4,5 +4,14 @@ module.exports = {
     transform: {
         '^.+\\.ts$': 'ts-jest',
     },
-    moduleFileExtensions: ['ts', 'js']
+    moduleFileExtensions: ['ts', 'js'],
+    reporters: [
+        "default",
+        ["jest-html-reporters", {
+            "publicPath": "./html-report",
+            "filename": "report.html",
+            "expand": true
+        }]
+    ]
+
 };
