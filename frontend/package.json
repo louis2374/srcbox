@@ -13,6 +13,7 @@
         "@emotion/styled": "^11.14.0",
         "@monaco-editor/react": "^4.7.0-rc.0",
         "@mui/material": "^6.4.8",
+        "@playwright/test": "^1.52.0",
         "@srcbox/library": "*",
         "@types/highlight.js": "^9.12.4",
         "@types/react-syntax-highlighter": "^15.5.13",
