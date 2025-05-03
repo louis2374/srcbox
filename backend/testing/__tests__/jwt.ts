@@ -15,7 +15,7 @@ const USER: DB_User =
     user_email: EMAIL,
     user_password: "<hashed>>",
     user_verified: true,
-    user_version: 1
+    user_version: 0
 }
 
 let token = "";
@@ -39,8 +39,6 @@ beforeAll(async () =>
 
     const json = await out.json();
     USER.user_id = json.user_id;
-
-    console.log({ USER });
 })
 
 describe("creating and validating json web tokens", () =>

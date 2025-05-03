@@ -7,8 +7,10 @@ import { api } from "../util";
 // All these tests have to be in one file, as jest does not allow me to define the order
 // in which files are run. And most tests require the user register to have run for auth
 //
+// These tests are in a flow, as with my current setup, making each test self
+// sufficient would be extremely slow to run, and write.
 //
-
+//
 
 const EMAIL = "bingus@gmail.com";
 const PASSWORD = "bingus";
@@ -354,7 +356,7 @@ describe("authorization", () =>
     });
 })
 
-describe("creating posts", () =>
+describe("managing posts", () =>
 {
     let upload_url: string;
 
@@ -471,9 +473,62 @@ describe("creating posts", () =>
 
         expect(out.status).toBe(Http.NOT_FOUND);
     });
+
+    it("should allow multiple posts", async () =>
+    {
+        const out = await fetch(api("/posts"),
+            {
+                method: "POST",
+                body: JSON.stringify(
+                    {
+                        title: TITLE,
+                        description: DESCRIPTION
+                    }),
+                headers:
+                {
+                    "Content-Type": "application/json",
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        const json = await out.json();
+
+        expect(out.status).toBe(Http.CREATED);
+        expect(json.post_id).toBe(2);
+
+        // Used in next test
+        upload_url = json.upload_url;
+    });
+
+    it("should accept delete request", async () => 
+    {
+        const out = await fetch(api("/posts/" + 2),
+            {
+                method: "DELETE",
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.OK);
+    });
+
+    it("should now be deleted", async () =>
+    {
+        const out = await fetch(api("/posts/" + 2),
+            {
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.NOT_FOUND);
+    })
 });
 
-describe("liking posts", () =>
+describe("managing likes", () =>
 {
     it("should accept the like request", async () =>
     {
@@ -605,7 +660,7 @@ describe("liking posts", () =>
     });
 });
 
-describe("commenting on a post", () =>
+describe("managing comments", () =>
 {
     it("should accept the comment request", async () =>
     {
@@ -766,3 +821,40 @@ describe("commenting on a post", () =>
         expect(json[0].comment_text).toBe(COMMENT3);
     });
 });
+
+describe("managing follows", () =>
+{
+    it("should accept the follow request", async () =>
+    {
+        const out = await fetch(api("/users/" + 1 + "/follow"),
+            {
+                method: "POST",
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.OK)
+    });
+
+    it("should have one follower", async () =>
+    {
+        const out = await fetch(api("/users/" + 1 + "/follows"),
+            {
+                method: "GET",
+                headers:
+                {
+                    "authorization": "Bearer " + token
+                }
+            });
+
+        expect(out.status).toBe(Http.OK);
+
+
+        const json = await out.json();
+
+        expect(json.follows).toBe(1);
+
+    });
+})

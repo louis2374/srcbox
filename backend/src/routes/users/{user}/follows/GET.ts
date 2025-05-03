@@ -19,7 +19,7 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { user } }
     db_con("tbl_follows").where({ user_id: user }).count<[{ count: number }]>("*")
         .then(([{ count }]) =>
         {
-            std_response(res, { follows: count }, Http.OK);
+            std_response(res, { follows: Number(count) }, Http.OK);
         })
         .catch(() =>
         {

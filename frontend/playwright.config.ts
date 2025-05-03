@@ -14,4 +14,6 @@ export default defineConfig({
         port: 3000,
         reuseExistingServer: !process.env.CI,
     },
+    globalSetup: './tests/setup.ts',
+    globalTeardown: './tests/exit.ts'
 });
