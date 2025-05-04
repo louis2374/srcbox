@@ -10,10 +10,10 @@ import React, { ChangeEvent, FormEvent, useRef, useState } from 'react'
 
 const page = () =>
 {
-    const email = useRef("aseel@muslim.com");
-    const password = useRef("poosock_master_12");
-    const confirm_password = useRef("poosock_master_12");
-    const username = useRef("bingus")
+    const email = useRef("");
+    const password = useRef("");
+    const confirm_password = useRef("");
+    const username = useRef("");
 
     // Current error
     const [error, set_error] = useState("");
@@ -47,7 +47,7 @@ const page = () =>
             set_error_locations(o => [...o.filter(l => l != "password")])
         }
 
-        if (!username.current)
+        if (!username.current || username.current.length == 0)
         {
             set_error_locations(o => [...o, "username"])
         }
@@ -55,7 +55,6 @@ const page = () =>
         {
             set_error_locations(o => [...o.filter(l => l != "username")])
         }
-
 
         if (password.current != confirm_password.current)
         {
@@ -166,15 +165,23 @@ const page = () =>
         // Rough point at which a password is not valid
         if (!is_sufficient_password(password.current))
         {
-            set_error("password requires at least 8 chars, one number and one letter.");
+            set_error("password requires at least 8 chars, one number and one letter");
             set_error_locations(["password"])
             return;
         }
 
         if (password.current != confirm_password.current)
         {
-            set_error("passwords do not match.");
+            set_error("passwords do not match");
             set_error_locations(["confirm_password"])
+            return;
+        }
+
+        if (username.current.length == 0)
+        {
+
+            set_error("username is empty");
+            set_error_locations(["username"])
             return;
         }
 

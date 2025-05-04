@@ -4,10 +4,11 @@ export default defineConfig({
     testDir: './tests',
     timeout: 30000,
     retries: 1,
-    reporter: [['html', { open: 'never' }]],
+    reporter: [['html', { open: 'on-failure' }]],
     use: {
         baseURL: 'http://localhost:3000',
         headless: true,
+        screenshot: 'only-on-failure',
     },
     webServer: {
         command: 'npm run dev',

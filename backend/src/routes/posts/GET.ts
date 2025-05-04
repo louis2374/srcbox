@@ -8,7 +8,7 @@ import { jwt_create_login_token } from "../../auth/jwt";
 import { route_jwt_authoriser } from "../../auth/route_authoriser";
 import { db_con } from "../../database/connection";
 import { post_create_upload_url } from "../../post_storage/storage";
-import { param_validator_max_count } from "../../route_validators/generic";
+import { param_validator_max_count, param_validator_sort_direction } from "../../route_validators/generic";
 import { MAX_RETURN_COUNT } from "../../consts";
 import { post_get_all_names } from "../../database/interface/post";
 
@@ -17,11 +17,13 @@ interface Params
     url:
     {
         offset?: number,
-        limit?: number
+        limit?: number,
+        sort: boolean,
+        sort_direction: "string",
     }
 }
 
-const handler: HandlerFunctionAuth<Params> = async (req, res, { url: { offset, limit } }, p_user) =>
+const handler: HandlerFunctionAuth<Params> = async (req, res, { url: { offset, limit, sort, sort_direction } }, p_user) =>
 {
 
     post_get_all_names();
@@ -31,7 +33,7 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { url: { offset, l
     // Its done in order, and will need to be updated as i modify the posts table (Which I will in the future)
     // Pretty big query, basically just grabs a bunch of data and joins it all together
     // Its done in order, and will need to be updated as i modify the posts table (Which I will in the future)
-    db_con("tbl_posts")
+    const query = db_con("tbl_posts")
         .select(
             "tbl_posts.*",
             // Need to use whereRaw, as the usual .where() does not allow string as second param
@@ -42,16 +44,21 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { url: { offset, l
         )
         .limit(limit || MAX_RETURN_COUNT)
         .offset(offset || 0)
-        .then((posts) =>
-        {
-            std_response(res, posts.map(post => (
-                {
-                    ...post,
-                    liked: Number(post.liked) ? true : false,
-                    comment_count: Number(post.comment_count),
-                    like_count: Number(post.like_count)
-                })), Http.OK);
-        })
+
+
+    // Optional sorting, sort_direction is sanitised and validated in the param validator
+    if (sort) query.orderBy("like_count", sort_direction || "asc");
+
+    query.then((posts) =>
+    {
+        std_response(res, posts.map(post => (
+            {
+                ...post,
+                liked: Number(post.liked) ? true : false,
+                comment_count: Number(post.comment_count),
+                like_count: Number(post.like_count)
+            })), Http.OK);
+    })
         .catch(() =>
         {
             std_response_error(res, "Failed to retrieve posts", StdAPIErrors.UNKNOWN, Http.INTERNAL_SERVER_ERROR)
@@ -64,5 +71,7 @@ export default docroute()
     .parameter("url", "limit", "number", false, param_validator_max_count)
     .parameter("url", "offset", "number", false)
     .parameter("url", "search", "string", false)
+    .parameter("url", "sort_direction", "string", false, param_validator_sort_direction)
+    .parameter("url", "sort", "boolean", false)
     .authoriser(route_jwt_authoriser)
     .build();
