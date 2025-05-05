@@ -4,6 +4,7 @@ import { D_Post, Method } from "@srcbox/library";
 import { useEffect, useRef, useState } from "react";
 import SinglePostScroller from "@/components/SingleDisplayPostScroller/SinglePostScroller";
 import { useParams } from "next/navigation";
+import { Params } from "next/dist/server/request/params";
 
 const page = () =>
 {

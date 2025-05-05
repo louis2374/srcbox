@@ -13,6 +13,7 @@ const EMAIL2 = "nerd2@gmail.com";
 const INVALID_EMAIL = "bademail";
 const PASSWORD = "trash_password123!";
 const WEAK_PASSWORD = "hi";
+const COMMENT = "what is this??";
 
 // Post
 const CSS = `#test {
@@ -320,5 +321,154 @@ test.describe("Editor page", () =>
         await page.locator('button', { hasText: "Commit" }).click();
 
         await page.waitForURL("**/view/**")
+    });
+});
+
+test.describe("Explore page", () =>
+{
+    test('First post loaded', async ({ page }) =>
+    {
+        await login(page, EMAIL, PASSWORD);
+        await page.waitForURL("/explore")
+
+        // Need to check inside the iframe
+        const post = await page.waitForSelector('iframe');
+        const frame = await post.contentFrame();
+
+        if (!frame) throw new Error("Post not found");
+
+        // Hello world is what i defined the post be to above
+        await expect(frame.getByText("Hello World")).toBeVisible();
+    });
+
+    test('Like post button updates', async ({ page }) =>
+    {
+        await login(page, EMAIL, PASSWORD);
+        await page.waitForURL("/explore")
+
+        await page.getByLabel("Like").click();
+
+        const likes = await page.getByLabel("Like").textContent();
+
+        // Updates the count
+        expect(likes).toBe("1");
+        expect(page.getByLabel("Like")).toHaveClass(/text-accent/);
+
+        // Takes a sec for webserver to update
+        await page.waitForTimeout(400);
+    });
+
+    test('Unlike post button updates', async ({ page }) =>
+    {
+        await login(page, EMAIL, PASSWORD);
+        await page.waitForURL("/explore")
+
+        await page.getByLabel("Like").click();
+
+        const likes = await page.getByLabel("Like").textContent();
+
+        // Wait for the iframe to load
+        await page.waitForSelector("iframe")
+
+        expect(likes).toBe("0");
+
+        // Has a space in front bc it will have hover:test-accent, but not text-accent on its own
+        expect(page.getByLabel("Like")).not.toHaveClass(/ text-accent/);
+    });
+
+    test('Comment window opens', async ({ page }) =>
+    {
+        await login(page, EMAIL, PASSWORD);
+        await page.waitForURL("/explore")
+
+        await page.getByLabel("Comment").click();
+
+        expect(page.getByText("Comments")).toBeVisible();
+    });
+
+    test('Comment window closes', async ({ page }) =>
+    {
+        await login(page, EMAIL, PASSWORD);
+        await page.waitForURL("/explore")
+
+        // Open
+        await page.getByLabel("Comment").click();
+        await page.waitForTimeout(100);
+
+        // Close
+        await page.getByLabel("Comment").click();
+
+        expect(page.getByText("Comments")).not.toBeVisible();
+    });
+
+    test('Post comment greyed with no text', async ({ page }) =>
+    {
+        await login(page, EMAIL, PASSWORD);
+        await page.waitForURL("/explore")
+
+        // Open
+        await page.getByLabel("Comment").click();
+        const input = await page.waitForSelector("form>button");
+
+        expect(await input.isDisabled()).toBe(true);
+    });
+
+    test('Post comment not greyed with text', async ({ page }) =>
+    {
+        await login(page, EMAIL, PASSWORD);
+        await page.waitForURL("/explore")
+
+        // Open
+        await page.getByLabel("Comment").click();
+
+        // Type
+        await page.getByPlaceholder("Howd you center the div?").fill("Test");
+
+        const input = await page.waitForSelector("form>button");
+        expect(await input.isDisabled()).toBe(false);
+    });
+
+    test('Can post comment', async ({ page }) =>
+    {
+        await login(page, EMAIL, PASSWORD);
+        await page.waitForURL("/explore")
+
+        // Open
+        await page.getByLabel("Comment").click();
+
+        // Type
+        await page.getByPlaceholder("Howd you center the div?").fill(COMMENT);
+
+        // Send comment
+        const button = await page.waitForSelector("form>button");
+
+        // Takes a sec to remove the text from the input
+        await page.waitForTimeout(50);
+        await button.click();
+
+        await expect(page.getByText(COMMENT)).toBeVisible();
+
+        // I know its not good to use this in tests, but i need to use it to account for server speeds
+        await page.waitForTimeout(400);
+    });
+
+    test('Comment count updates', async ({ page }) =>
+    {
+        await login(page, EMAIL, PASSWORD);
+        await page.waitForURL("/explore")
+
+        const comments = await page.getByLabel("Comment").textContent();
+
+        expect(comments).toBe("1");
+    });
+
+    test('Open in editor button works', async ({ page }) =>
+    {
+        await login(page, EMAIL, PASSWORD);
+        await page.waitForURL("/explore")
+
+        await page.getByLabel("Open in editor").click();
+
+        await page.waitForURL("**/editor/**");
     });
 });

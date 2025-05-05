@@ -17,7 +17,7 @@ interface Props
 const layout: React.FC<Readonly<Props>> = ({ children }) =>
 {
     return (
-        <html className="h-full">
+        <html className="h-full dark">
             <body className="min-h-full flex-col flex flex-1">
                 {children}
             </body>
