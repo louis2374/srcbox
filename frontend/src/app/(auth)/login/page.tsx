@@ -1,5 +1,6 @@
 "use client"
 import FormInput from '@/components/FormInput'
+import Loader from '@/components/Loader'
 import SButton from '@/components/SButton'
 import { join } from '@/lib/css'
 import { capitalise, is_valid_email } from '@srcbox/library'
@@ -18,12 +19,16 @@ const page = () =>
     // The names of elements which should be highlighted as erroring
     const [error_locations, set_error_locations] = useState<Array<string>>([])
 
+    // Loading state, when logging in, ect ect
+    const [loading, set_loading] = useState(false);
+
 
     const router = useRouter();
     const params = useSearchParams();
 
     const login = async (p_email: string, p_password: string): Promise<boolean> =>
     {
+        set_loading(true)
         try
         {
             const response = await fetch("/api/login", {
@@ -59,6 +64,10 @@ const page = () =>
             set_error_locations([]);
             return false;
         }
+        finally
+        {
+            set_loading(false)
+        }
     }
 
     const submit = async (e: FormEvent) =>
@@ -81,14 +90,14 @@ const page = () =>
             return;
         }
 
-        const success = await login(email, password);
+        login(email, password);
     }
 
     return (
-        <div className='align-middle justify-center flex flex-col gap-5'>
+        <div className='align-middle justify-center flex flex-col gap-5 m-auto'>
             <div className='text-center flex flex-col gap-1 pb-5'>
                 <h1 className='text-4xl'>Welcome Back</h1>
-                <span>New? Register <Link className='text-accent hover:underline' href={"/register"}>here</Link></span>
+                <span>New? Register <Link className={join('text-accent hover:underline', loading && "pointer-events-none")} href={"/register"}>here</Link></span>
             </div>
 
             {
@@ -101,8 +110,9 @@ const page = () =>
             <form
                 noValidate={true}
                 onSubmit={submit}
-                className='flex flex-col gap-10 justify-center align-middle text-xl'>
+                className='flex flex-col gap-10 justify-center align-middle text-xl relative'>
                 <FormInput
+                    disabled={loading}
                     name='email'
                     placeholder='Email'
                     type='email'
@@ -110,6 +120,7 @@ const page = () =>
                     update={(e) => set_email(e.target.value)}
                     className={join(error_locations.includes("email") && "border-b-red-500")} />
                 <FormInput
+                    disabled={loading}
                     name='password'
                     type='password'
                     placeholder='Password'
@@ -117,9 +128,11 @@ const page = () =>
                     update={(e) => set_password(e.target.value)}
                     className={join(error_locations.includes("email") && "border-b-red-500")} />
                 <SButton
+                    disabled={loading}
                     type='submit'
-                    className='hover:text-accent mx-auto px-5 py-1'
-                >Login</SButton>
+                    className='hover:text-accent mx-auto px-5 py-1 relative h-4'
+                >
+                    {loading ? <Loader /> : "Login"}</SButton>
             </form>
         </div>
     )

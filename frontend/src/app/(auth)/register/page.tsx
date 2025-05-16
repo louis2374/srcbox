@@ -1,5 +1,6 @@
 "use client"
 import FormInput from '@/components/FormInput'
+import Loader from '@/components/Loader'
 import SButton from '@/components/SButton'
 import { join } from '@/lib/css'
 import { capitalise, is_sufficient_password, is_valid_email, StdAPIErrors } from '@srcbox/library'
@@ -14,6 +15,9 @@ const page = () =>
     const password = useRef("");
     const confirm_password = useRef("");
     const username = useRef("");
+
+    // Loading state for network requests
+    const [loading, set_loading] = useState(false);
 
     // Current error
     const [error, set_error] = useState("");
@@ -93,6 +97,7 @@ const page = () =>
 
     const register = async (p_email: string, p_password: string, p_username: string): Promise<boolean> =>
     {
+        set_loading(true)
         try
         {
             const response = await fetch("/api/register", {
@@ -126,6 +131,10 @@ const page = () =>
             set_error("Failed to login, try again later")
             set_error_locations([]);
             return false;
+        }
+        finally
+        {
+            set_loading(false);
         }
     }
 
@@ -185,14 +194,14 @@ const page = () =>
             return;
         }
 
-        const success = await register(email.current, password.current, username.current);
+        register(email.current, password.current, username.current);
     }
 
     return (
         <div className='align-middle justify-center flex flex-col gap-5 w-64'>
             <div className='text-center flex flex-col gap-1 pb-5'>
                 <h1 className='text-4xl'>Welcome</h1>
-                <span>Have an account? Login <Link className='text-accent hover:underline' href={"/login"}>here</Link></span>
+                <span>Have an account? Login <Link className={join('text-accent hover:underline', loading && "pointer-events-none")} href={"/login"}>here</Link></span>
             </div>
 
             {
@@ -207,6 +216,7 @@ const page = () =>
                 onSubmit={submit}
                 className='flex flex-col gap-6 justify-center align-middle text-xl'>
                 <FormInput
+                    disabled={loading}
                     name='username'
                     type='text'
                     placeholder='Username'
@@ -214,6 +224,7 @@ const page = () =>
                     status_color={join(error_locations.includes("username") && "#f00")}
                 />
                 <FormInput
+                    disabled={loading}
                     name='email'
                     placeholder='Email'
                     type='email'
@@ -221,6 +232,7 @@ const page = () =>
                     status_color={join(error_locations.includes("email") && "#f00")}
                 />
                 <FormInput
+                    disabled={loading}
                     name='password'
                     type='password'
                     placeholder='Password'
@@ -228,6 +240,7 @@ const page = () =>
                     status_color={join(error_locations.includes("password") && "#f00")}
                 />
                 <FormInput
+                    disabled={loading}
                     name='confirm_password'
                     type='password'
                     placeholder='Confirm password'
@@ -235,9 +248,10 @@ const page = () =>
                     status_color={join(error_locations.includes("confirm_password") && "#f00")}
                 />
                 <SButton
+                    disabled={loading}
                     type='submit'
                     className='hover:text-accent mx-auto px-5 py-1'
-                >Register</SButton>
+                >{loading ? <Loader /> : "Register"}</SButton>
             </form>
         </div>
     )
