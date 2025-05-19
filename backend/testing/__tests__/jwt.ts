@@ -15,7 +15,8 @@ const USER: DB_User =
     user_email: EMAIL,
     user_password: "<hashed>>",
     user_verified: true,
-    user_version: 0
+    user_version: 0,
+    user_bio: ""
 }
 
 let token = "";

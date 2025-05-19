@@ -1,0 +1,271 @@
+# Test info
+
+- Name: Editor page >> html editor loads
+- Location: C:\Users\louis\Documents\srcbox\frontend\tests\main.spec.ts:201:9
+
+# Error details
+
+```
+Error: Timed out 5000ms waiting for expect(locator).toBeVisible()
+
+Locator: getByText('<!--HTML-->', { exact: true })
+Expected: visible
+Received: <element(s) not found>
+Call log:
+  - expect.toBeVisible with timeout 5000ms
+  - waiting for getByText('<!--HTML-->', { exact: true })
+
+    at C:\Users\louis\Documents\srcbox\frontend\tests\main.spec.ts:206:70
+```
+
+# Page snapshot
+
+```yaml
+- navigation:
+  - link "Srcbox":
+    - /url: /
+  - link "Home":
+    - /url: /
+    - img
+    - text: Home
+  - link "Explore":
+    - /url: /explore
+    - img
+    - text: Explore
+  - link "Editor":
+    - /url: /editor
+    - img
+    - text: Editor
+  - link "Featured":
+    - /url: /featured
+    - img
+    - text: Featured
+  - link "Profile":
+    - /url: /profile
+    - img
+    - text: Profile
+  - img
+- list:
+  - button "Post"
+  - text: "Title:"
+  - textbox "My Awesome Code"
+  - text: "Description:"
+  - textbox "Super cool description ngl"
+  - listitem:
+    - button "Load Template"
+  - listitem:
+    - button "Save"
+  - listitem:
+    - button "Reset"
+- text: Loading...
+- iframe
+- text: Loading... Loading...
+- alert
+```
+
+# Test source
+
+```ts
+  106 |
+  107 |     test('empty email register fails', async ({ page }) =>
+  108 |     {
+  109 |         await page.goto('/register');
+  110 |         await page.getByPlaceholder('Username').fill(USERNAME2)
+  111 |         await page.getByPlaceholder('Password', { exact: true }).fill(PASSWORD)
+  112 |         await page.getByPlaceholder('Confirm Password').fill(PASSWORD);
+  113 |         await page.getByText("Register").click();
+  114 |         await page.waitForSelector("text=\"Invalid email\"");
+  115 |     });
+  116 |
+  117 |     test('empty password register fails', async ({ page }) =>
+  118 |     {
+  119 |         await page.goto('/register');
+  120 |         await page.getByPlaceholder('Username').fill(USERNAME2)
+  121 |         await page.getByPlaceholder('Email').fill(EMAIL2)
+  122 |         await page.getByText("Register").click();
+  123 |         await page.waitForSelector("text=\"Password requires at least 8 chars, one number and one letter\"");
+  124 |     });
+  125 |
+  126 |     test('switch to login button visible', async ({ page }) =>
+  127 |     {
+  128 |         await page.goto('/register');
+  129 |         await expect(page.getByText("here", { exact: true })).toBeVisible();
+  130 |     });
+  131 |
+  132 |     test('here login button navigates to login page', async ({ page }) =>
+  133 |     {
+  134 |         await page.goto('/register');
+  135 |         await page.getByText("here", { exact: true }).click();
+  136 |         await page.waitForURL("/login");
+  137 |     });
+  138 | });
+  139 |
+  140 | test.describe("Login page", () =>
+  141 | {
+  142 |     test('login button is visible', async ({ page }) =>
+  143 |     {
+  144 |         await page.goto('/login');
+  145 |         await expect(page.getByText('Login')).toBeVisible();
+  146 |     });
+  147 |
+  148 |     test('login inputs are visible', async ({ page }) =>
+  149 |     {
+  150 |         await page.goto('/login');
+  151 |         await expect(page.getByPlaceholder('Email')).toBeVisible();
+  152 |         await expect(page.getByPlaceholder('Password')).toBeVisible();
+  153 |     });
+  154 |
+  155 |     test('valid login succeeds', async ({ page }) =>
+  156 |     {
+  157 |         await login(page, EMAIL, PASSWORD);
+  158 |         await page.waitForURL("/explore")
+  159 |     });
+  160 |
+  161 |     test('invalid email login fails', async ({ page }) =>
+  162 |     {
+  163 |         await login(page, INVALID_EMAIL, PASSWORD);
+  164 |         await page.waitForSelector("text=\"Invalid email\"");
+  165 |     });
+  166 |
+  167 |     test('weak password login fails', async ({ page }) =>
+  168 |     {
+  169 |         await login(page, EMAIL2, WEAK_PASSWORD);
+  170 |         await page.waitForSelector("text=\"Invalid password\"");
+  171 |     });
+  172 |
+  173 |     test('empty email login fails', async ({ page }) =>
+  174 |     {
+  175 |         await login(page, "", PASSWORD);
+  176 |         await page.waitForSelector("text=\"Invalid email\"");
+  177 |     });
+  178 |
+  179 |     test('empty password login fails', async ({ page }) =>
+  180 |     {
+  181 |         await login(page, EMAIL2, "");
+  182 |         await page.waitForSelector("text=\"Invalid password\"");
+  183 |     });
+  184 |
+  185 |     test('switch to register button visible', async ({ page }) =>
+  186 |     {
+  187 |         await page.goto('/login');
+  188 |         await expect(page.getByText("here", { exact: true })).toBeVisible();
+  189 |     });
+  190 |
+  191 |     test('here register button navigates to register page', async ({ page }) =>
+  192 |     {
+  193 |         await page.goto('/login');
+  194 |         await page.getByText("here", { exact: true }).click();
+  195 |         await page.waitForURL("/register");
+  196 |     });
+  197 | });
+  198 |
+  199 | test.describe("Editor page", () =>
+  200 | {
+  201 |     test('html editor loads', async ({ page }) =>
+  202 |     {
+  203 |         await login(page, EMAIL, PASSWORD);
+  204 |         await page.waitForURL("/explore")
+  205 |         await page.goto('/editor');
+> 206 |         await expect(page.getByText("<!--HTML-->", { exact: true })).toBeVisible();
+      |                                                                      ^ Error: Timed out 5000ms waiting for expect(locator).toBeVisible()
+  207 |     });
+  208 |
+  209 |     test('js editor loads', async ({ page }) =>
+  210 |     {
+  211 |         await login(page, EMAIL, PASSWORD);
+  212 |         await page.waitForURL("/explore")
+  213 |         await page.goto('/editor');
+  214 |         await expect(page.getByText("// JS", { exact: true })).toBeVisible();
+  215 |     });
+  216 |
+  217 |     test('css editor loads', async ({ page }) =>
+  218 |     {
+  219 |         await login(page, EMAIL, PASSWORD);
+  220 |         await page.waitForURL("/explore")
+  221 |         await page.goto('/editor');
+  222 |         await expect(page.getByText("/*CSS*/", { exact: true })).toBeVisible();
+  223 |     });
+  224 |
+  225 |     test('html editor allows editing', async ({ page }) =>
+  226 |     {
+  227 |         await login(page, EMAIL, PASSWORD);
+  228 |         await page.waitForURL("/explore")
+  229 |         await page.goto('/editor');
+  230 |         await page.getByText("<!--HTML-->", { exact: true }).click();
+  231 |         await clear_text(page);
+  232 |         await paste_text(page, HTML);
+  233 |         await expect(page.getByText(HTML, { exact: true })).toBeVisible();
+  234 |     });
+  235 |
+  236 |     test('js editor allows editing', async ({ page }) =>
+  237 |     {
+  238 |         await login(page, EMAIL, PASSWORD);
+  239 |         await page.waitForURL("/explore")
+  240 |         await page.goto('/editor');
+  241 |         await page.getByText("// JS", { exact: true }).click()
+  242 |         await clear_text(page);
+  243 |         await paste_text(page, JS);
+  244 |         await expect(page.getByText(JS, { exact: true })).toBeVisible();
+  245 |     });
+  246 |
+  247 |     test('css editor accepts text', async ({ page }) =>
+  248 |     {
+  249 |         await login(page, EMAIL, PASSWORD);
+  250 |         await page.waitForURL("/explore")
+  251 |         await page.goto('/editor');
+  252 |         await page.getByText("/*CSS*/", { exact: true }).click();
+  253 |         await clear_text(page);
+  254 |         await paste_text(page, CSS);
+  255 |     });
+  256 |
+  257 |     test('commit button is disabled if there is no title or description', async ({ page }) =>
+  258 |     {
+  259 |         await login(page, EMAIL, PASSWORD);
+  260 |         await page.waitForURL("/explore")
+  261 |         await page.goto('/editor');
+  262 |         await page.locator('button', { hasText: "Post" }).click();
+  263 |         await expect(page.locator('button', { hasText: "Commit" })).toBeDisabled();
+  264 |     });
+  265 |
+  266 |     test('commit button is disabled if there is no title', async ({ page }) =>
+  267 |     {
+  268 |         await login(page, EMAIL, PASSWORD);
+  269 |         await page.waitForURL("/explore")
+  270 |         await page.goto('/editor');
+  271 |         await page.locator('button', { hasText: "Post" }).click();
+  272 |         await page.getByPlaceholder("Super cool description ngl").fill("Some desc");
+  273 |         await expect(page.locator('button', { hasText: "Commit" })).toBeDisabled();
+  274 |     });
+  275 |
+  276 |     test('commit button is disabled if there is no description', async ({ page }) =>
+  277 |     {
+  278 |         await login(page, EMAIL, PASSWORD);
+  279 |         await page.waitForURL("/explore")
+  280 |         await page.goto('/editor');
+  281 |         await page.locator('button', { hasText: "Post" }).click();
+  282 |         await page.getByPlaceholder("My Awesome Code").fill("Some Title");
+  283 |         await expect(page.locator('button', { hasText: "Commit" })).toBeDisabled();
+  284 |     });
+  285 |
+  286 |     test('commit button is enabled if there is title and description', async ({ page }) =>
+  287 |     {
+  288 |         await login(page, EMAIL, PASSWORD);
+  289 |         await page.waitForURL("/explore")
+  290 |         await page.goto('/editor');
+  291 |         await page.locator('button', { hasText: "Post" }).click();
+  292 |         await page.getByPlaceholder("My Awesome Code").fill("Some Title");
+  293 |         await page.getByPlaceholder("Super cool description ngl").fill("Some desc");
+  294 |         await expect(page.locator('button', { hasText: "Commit" })).toBeEnabled();
+  295 |     });
+  296 |
+  297 |     test('upload post', async ({ page }) =>
+  298 |     {
+  299 |         await login(page, EMAIL, PASSWORD);
+  300 |         await page.waitForURL("/explore")
+  301 |         await page.goto('/editor');
+  302 |         await page.locator('button', { hasText: "Post" }).click();
+  303 |         await page.getByPlaceholder("My Awesome Code").fill("Some Title");
+  304 |         await page.getByPlaceholder("Super cool description ngl").fill("Some desc");
+  305 |
+  306 |
+```
