@@ -19,11 +19,12 @@ interface Params
         offset?: number,
         limit?: number,
         sort: boolean,
-        sort_direction: "string",
+        sort_direction: string,
+        user?: number
     }
 }
 
-const handler: HandlerFunctionAuth<Params> = async (req, res, { url: { offset, limit, sort, sort_direction } }, p_user) =>
+const handler: HandlerFunctionAuth<Params> = async (req, res, { url: { offset, limit, sort, sort_direction, user } }, p_user) =>
 {
 
     post_get_all_names();
@@ -41,8 +42,12 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { url: { offset, l
             db_con("tbl_comments").count("*").whereRaw("tbl_comments.post_id = tbl_posts.post_id").as("comment_count"),
             db_con("tbl_likes").count("*").whereRaw("tbl_likes.post_id = tbl_posts.post_id").as("like_count"),
             db_con("tbl_likes").whereRaw("tbl_likes.post_id = tbl_posts.post_id AND tbl_likes.user_id = ?", [p_user.user_id]).select(db_con.raw("1")).limit(1).as("liked"),
-        )
-        .limit(limit || MAX_RETURN_COUNT)
+        );
+
+    // If user filter is added, filter by user
+    if (user) query.where("tbl_posts.user_id", user);
+
+    query.limit(limit || MAX_RETURN_COUNT)
         .offset(offset || 0)
 
 
@@ -73,5 +78,6 @@ export default docroute()
     .parameter("url", "search", "string", false)
     .parameter("url", "sort_direction", "string", false, param_validator_sort_direction)
     .parameter("url", "sort", "boolean", false)
+    .parameter("url", "user", "number", false)
     .authoriser(route_jwt_authoriser)
     .build();

@@ -22,7 +22,21 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { user } }
         user_id: user
     }
 
-    db_con("tbl_users").select("*").where(user_find).first<DB_User | undefined>()
+    db_con("tbl_users")
+        .select("tbl_users.*",
+            db_con("tbl_follows")
+                .count("*")
+                .whereRaw("tbl_follows.user_id = tbl_users.user_id")
+                .as("following"),
+            db_con("tbl_follows")
+                .count("*")
+                .whereRaw("tbl_follows.user_id_followed = tbl_users.user_id")
+                .as("followers")
+        )
+        .where(user_find)
+        .first<DB_User & { following: number; followers: number } | undefined>()
+
+
         .then((retrieved_user) =>
         {
             // No user found
@@ -34,10 +48,13 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { user } }
 
             // I may add more stuff to this later, such as total posts,
             // followers ect ect (not stored in db)
-            const safe: Partial<DB_User> =
+            const safe =
             {
                 user_id: retrieved_user.user_id,
-                user_name: retrieved_user.user_name
+                user_name: retrieved_user.user_name,
+                user_bio: retrieved_user.user_bio,
+                following: retrieved_user.following,
+                followers: retrieved_user.followers
             }
 
             // Only send safe data

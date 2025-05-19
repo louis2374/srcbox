@@ -5,7 +5,8 @@ export interface DB_User
     user_email: string,
     user_password: string,
     user_verified: boolean,
-    user_version: number
+    user_version: number,
+    user_bio: string
 }
 
 export interface DB_Comment

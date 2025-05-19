@@ -46,7 +46,8 @@ const handler: HandlerFunction<Params> = async (req, res, { body: { username, em
         user_email: email,
         user_name: username,
         user_password: hash,
-        user_verified: false
+        user_verified: false,
+        user_bio: ""
     }
 
     // Try to insert the user into the db

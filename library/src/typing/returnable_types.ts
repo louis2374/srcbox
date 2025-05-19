@@ -2,7 +2,10 @@ export interface D_User
 {
     user_id: number,
     user_name: string,
-    user_pfp: string
+    user_pfp: string,
+    user_bio: string,
+    followers: number,
+    following: number
 }
 
 export interface D_Comment

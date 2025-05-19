@@ -19,10 +19,11 @@ interface Props
     load_content?: boolean, // If the carad will pull the code and load the iframe,
     id?: string,
     className?: string,
-    button_pressed?: (p_button: string) => void
+    button_pressed?: (p_button: string) => void,
+    simple?: boolean
 }
 
-const PostCard: React.FC<Props> = ({ post, id, className, button_pressed }) =>
+const PostCard: React.FC<Props> = ({ post, id, className, button_pressed, simple }) =>
 {
     const token = useToken();
     const nav = useRouter();
@@ -49,6 +50,10 @@ const PostCard: React.FC<Props> = ({ post, id, className, button_pressed }) =>
         api("/posts/" + post.post_id + "/like", p_like ? Method.POST : Method.DELETE, { token })
             .catch(console.error)
     }
+
+    if (simple) return <div className='w-full h-full bg-neutral-900 border-solid border-black border-4 rounded'>
+        {content ? <PostCardContentPlayer content={content} /> : "Loading"}
+    </div>
 
     return (
         <div
