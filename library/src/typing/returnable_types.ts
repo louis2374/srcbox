@@ -5,7 +5,8 @@ export interface D_User
     user_pfp: string,
     user_bio: string,
     followers: number,
-    following: number
+    following: number,
+    followed: boolean
 }
 
 export interface D_Comment

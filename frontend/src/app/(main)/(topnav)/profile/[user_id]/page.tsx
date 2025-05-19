@@ -1,4 +1,5 @@
 import Comments from '@/components/CommentBox/Comments';
+import FollowButton from '@/components/FollowButton';
 import PostCard from '@/components/PostCard/PostCard';
 import SButton from '@/components/SButton';
 import { api } from '@/lib/api/api';
@@ -39,7 +40,6 @@ const page: React.FC<Props> = async ({ params }) =>
     catch (e)
     {
         console.error(e);
-
     }
 
     return (
@@ -50,9 +50,7 @@ const page: React.FC<Props> = async ({ params }) =>
                 <div className='flex flex-col gap-4 w-full'>
                     <div className='flex flex-row justify-between w-full'>
                         <h1 className='text-3xl'>{user?.user_name}</h1>
-                        <SButton className='p-2 px-3 bg-accent col-start-2 md:col-start-3 overflow-hidden disabled:text-neutral-400 disabled:bg-neutral-800'>
-                            Follow
-                        </SButton>
+                        <FollowButton target={Number(user_id)} starting_followed={user?.followed || false} />
                     </div>
 
                     <div className='flex flex-row gap-6 text-lg'>

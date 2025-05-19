@@ -31,10 +31,11 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { user } }
             db_con("tbl_follows")
                 .count("*")
                 .whereRaw("tbl_follows.user_id_followed = tbl_users.user_id")
-                .as("followers")
-        )
+                .as("followers"),
+            db_con("tbl_follows").where("user_id_followed", user).andWhere("user_id", p_user.user_id).select(db_con.raw("1")).limit(1).as("followed"))
         .where(user_find)
-        .first<DB_User & { following: number; followers: number } | undefined>()
+        .first<DB_User & { following: number; followers: number, followed: "1" | "0" } | undefined>()
+
 
 
         .then((retrieved_user) =>
@@ -52,9 +53,10 @@ const handler: HandlerFunctionAuth<Params> = async (req, res, { path: { user } }
             {
                 user_id: retrieved_user.user_id,
                 user_name: retrieved_user.user_name,
-                user_bio: retrieved_user.user_bio,
+                user_bio: retrieved_user.user_bio || "",
                 following: retrieved_user.following,
-                followers: retrieved_user.followers
+                followers: retrieved_user.followers,
+                followed: retrieved_user.followed
             }
 
             // Only send safe data
