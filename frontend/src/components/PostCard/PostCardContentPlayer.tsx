@@ -1,4 +1,5 @@
 "use client";
+import { html_convert_to_document } from '@/lib/html/document';
 import { EditableCodeData } from '@srcbox/library';
 import React, { SyntheticEvent, useEffect, useRef, useState } from 'react';
 
@@ -33,30 +34,17 @@ const PostCardContentPlayer: React.FC<Props> = ({ content }) =>
         };
     }, []);
 
-    const inject_code = (e: SyntheticEvent<HTMLIFrameElement, Event>) =>
-    {
-        const doc = e.currentTarget.contentWindow?.document;
-        if (!doc) return;
-
-        const styles = doc.createElement("style");
-        styles.innerHTML = content.css || "";
-
-        const script = doc.createElement("script");
-        script.innerHTML = content.js || "";
-
-        doc.head.appendChild(styles);
-        doc.head.appendChild(script);
-    };
 
     return (
         <div ref={main_container} className="flex-1 w-full h-full">
             {
-                is_visible &&
+                //is_visible &&
+                true &&
                 (content ?
                     <iframe
+                        sandbox="allow-scripts allow-forms"
                         className="flex-1 w-full h-full"
-                        srcDoc={content.html}
-                        onLoad={inject_code}
+                        srcDoc={html_convert_to_document(content.html || "", content.css, content.js)}
                     />
                     :
                     "Loading")

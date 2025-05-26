@@ -1,8 +1,9 @@
 "use client"
 import { debounce } from "@/lib/util";
-import { SyntheticEvent, useCallback, useState } from "react";
+import { SyntheticEvent, useCallback, useRef, useState } from "react";
 import CodeEditor from "@/components/CodeEditor";
 import EditorTabBar from "@/components/editor/EditorTabBar";
+import { html_convert_to_document } from "@/lib/html/document";
 
 interface Props
 {
@@ -13,35 +14,29 @@ interface Props
 
 const FullEditor: React.FC<Props> = ({ html, css, js }) =>
 {
-    const [i_js, i_set_js] = useState(js || "");
-    const [i_css, i_set_css] = useState(css || "");
-    const [i_html, i_set_html] = useState(html || "");
-
-    // The iframe reloads if the html is updated, i dont want this
-    // I want it to only reload with the deboucne function.
-    // Therefore I update this only when i need to update the html
-    const [iframe_html, set_iframe_html] = useState(""); // TODO
-
+    const i_js = useRef(js || "");
+    const i_css = useRef(css || "");
+    const i_html = useRef(html || "");
     const [key, set_key] = useState(0);
 
     const set_js = (p_js: string) =>
     {
         console.log("UPDATE")
-        i_set_js(p_js);
+        i_js.current = p_js;
         reload_iframe();
     }
 
     const set_css = (p_css: string) =>
     {
         console.log("UPDATE")
-        i_set_css(p_css);
+        i_css.current = p_css;
         reload_iframe();
     }
 
     const set_html = (p_html: string) =>
     {
         console.log("UPDATE")
-        i_set_html(p_html);
+        i_html.current = p_html;
         reload_iframe();
     }
 
@@ -50,39 +45,22 @@ const FullEditor: React.FC<Props> = ({ html, css, js }) =>
         set_key(key + 1);
     }, 1000), [key])
 
-    const inject_code = (e: SyntheticEvent<HTMLIFrameElement, Event>) =>
-    {
-        console.log("IFRAMER ELAODED")
-        const doc = e.currentTarget.contentWindow?.document;
-        if (!doc) return;
-
-        const styles = doc.createElement("style");
-        styles.innerHTML = i_css;
-
-        const script = doc.createElement("script");
-        script.innerHTML = i_js;
-
-        doc.head.appendChild(styles);
-        doc.head.appendChild(script);
-    }
-
     return (
         <div className="flex flex-row flex-1 w-full pt-3 box-border">
             <EditorTabBar code_content={JSON.stringify({ html: i_html, css: i_css, js: i_js })} />
             <div className="w-full flex-1 grid md:grid-cols-2 grid-rows-2 gap-2">
-                <CodeEditor language="html" onChange={set_html} value={i_html} />
+                <CodeEditor language="html" onChange={set_html} value={i_html.current} />
                 <div className=" ">
                     <iframe
                         key={key}
+                        sandbox="allow-scripts allow-forms"
                         className="w-full h-full"
-                        srcDoc={i_html}
-                        onLoad={inject_code}
+                        srcDoc={html_convert_to_document(i_html.current, i_css.current, i_js.current)}
                     >
-
                     </iframe>
                 </div>
-                <CodeEditor language="javascript" onChange={set_js} value={i_js} />
-                <CodeEditor language="css" onChange={set_css} value={i_css} />
+                <CodeEditor language="javascript" onChange={set_js} value={i_js.current} />
+                <CodeEditor language="css" onChange={set_css} value={i_css.current} />
             </div>
         </div>
     );

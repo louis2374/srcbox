@@ -14,7 +14,6 @@ interface Props
 
 const Comments: React.FC<Props> = ({ post_id }) =>
 {
-    console.log({ wtf: post_id || "OK" })
     const token = useToken();
     const comments = useRef<Array<D_Comment>>([]);
     const [comment, set_comment] = useState("");

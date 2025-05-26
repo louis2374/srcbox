@@ -1,3 +1,4 @@
+import { api } from "@/lib/api/api";
 import { Http, StdAPIErrors } from "@srcbox/library";
 import { error } from "console";
 import { NextApiHandler } from "next";
@@ -31,6 +32,7 @@ export const POST = async (req: NextRequest) =>
 
         // Success
         const cook = await cookies();
+
         cook.set("token", parsed.token)
         return NextResponse.json({ message: "success" }, { status: logged.status })
     }

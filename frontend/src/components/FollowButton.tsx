@@ -18,13 +18,16 @@ const FollowButton: React.FC<Props> = ({ starting_followed, target }) =>
 {
     const token = useToken();
     const [followed, set_followed] = useState(starting_followed);
+    const current_followed = useRef(starting_followed);
 
-    const get = () => followed;
+    // This waas kinda annoying, updating every frame like this allows update_followed to use the most
+    // recent version when it fires
+    current_followed.current = followed;
 
     const update_followed = useRef(debounce(() =>
     {
-        api("/users/" + target + "/follow", get() ? Method.DELETE : Method.POST, { token }).then(console.log).catch(console.log)
-    }, 2000));
+        api("/users/" + target + "/follow", current_followed.current ? Method.POST : Method.DELETE, { token }).catch(console.log)
+    }, 500));
 
     return (
         <SButton

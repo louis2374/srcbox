@@ -27,6 +27,10 @@ const SinglePostScroller: React.FC<Props> = () =>
     const loading_posts = useRef(false);
     const [show_comments, set_show_comments] = useState(false);
 
+    // Index inside posts array of the current post
+    // Allows me to only preload posts a few positions away
+    const [current_visible_index, set_current_visible_index] = useState(0);
+
     useEffect(() =>
     {
         observer.current = build_observer();
@@ -36,7 +40,7 @@ const SinglePostScroller: React.FC<Props> = () =>
             const s = scroll_container.current!;
             const bottom_distance = s.scrollHeight - s.scrollTop - s.clientHeight; // Distance from bottom
 
-            // Multiply client height to add a little leeway
+            // Multipling client height to add a little leeway
             if (bottom_distance < s.clientHeight * page_size * 1.1) load_new_posts();
         }
 
@@ -66,7 +70,6 @@ const SinglePostScroller: React.FC<Props> = () =>
     const load_new_posts = () =>
     {
         if (loading_posts.current) return;
-        console.log("LOADING")
         loading_posts.current = true;
         api("/posts", Method.GET, { token, query_params: { offset: offset.current + "", limit: page_size + "" } })
             .then((response) =>
@@ -107,7 +110,10 @@ const SinglePostScroller: React.FC<Props> = () =>
                 if (entry.isIntersecting)
                 {
                     // Set the url to this id
-                    set_post_in_url(Number(entry.target.getAttribute("data-id")));
+                    //set_post_in_url(Number(entry.target.getAttribute("data-id")));
+                    set_post_in_url(+(entry.target.getAttribute("data-index") || 0));
+
+                    set_current_visible_index(+(entry.target.getAttribute("data-index") || 0))
                 }
             })
 
@@ -130,10 +136,13 @@ const SinglePostScroller: React.FC<Props> = () =>
     }, [])
 
     return (
-        <div ref={scroll_container}
-            className='flex flex-col overflow-scroll overflow-x-hidden snap-mandatory snap-y h-screen items-center no-scrollbar'>
-            {loaded_posts.map(p => (
+        <div
+            ref={scroll_container}
+            className='flex flex-col overflow-scroll overflow-x-hidden snap-mandatory snap-y h-screen items-center no-scrollbar'
+        >
+            {loaded_posts.map((p, i) => (
                 <div
+                    data-index={i}
                     key={p.post_id}
                     className='flex flex-row w-full min-h-[100vh] py-20 justify-center snap-center gap-8 px-10'
                 >
