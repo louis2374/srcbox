@@ -18,10 +18,8 @@ const page = () =>
     }
 
     return (
-        <div className="w-52 justify-center align-middle flex flex-col">
-            <FormInput placeholder="Title" value={name} update={(e) => set_name(e.target.value)} />
-            <FormInput placeholder="Description" value={desc} update={(e) => set_desc(e.target.value)} />
-            <SButton onClick={sub}>Post</SButton>
+        <div className="w-52 justify-center align-middle text-center flex-1 flex flex-col">
+            <h1 className="text-4xl">Coming Soon!</h1>
         </div>
     );
 }

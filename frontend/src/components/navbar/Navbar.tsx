@@ -14,10 +14,10 @@ import MiniProfileBox from '../MiniProfileBox/MiniProfileBox';
 // build each one individually
 const buttons =
     [
-        { href: "/", label: "Home", icon: AiFillHome },
+        { href: "/coming_soon", label: "Home", icon: AiFillHome },
         { href: "/explore", label: "Explore", icon: TbBinocularsFilled },
         { href: "/editor", label: "Editor", icon: FaCode },
-        { href: "/featured", label: "Featured", icon: MdLeaderboard },
+        { href: "/coming_soon", label: "Featured", icon: MdLeaderboard },
         { href: "/profile", label: "Profile", icon: MdAccountCircle },
     ];
 
@@ -44,7 +44,7 @@ const Navbar: React.FC<Props> = ({ vertical }) =>
                     buttons.map(({ href, label, icon: Icon }) =>
                     {
 
-                        const active = href.length !== 1 ? pn.startsWith(href) : pn === href
+                        const active = href.length !== 1 && href !== "coming_soon" ? pn.startsWith(href) : pn === href
                         return <Link
                             key={label}
                             href={href}
