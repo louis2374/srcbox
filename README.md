@@ -10,7 +10,7 @@
 - Once this has finished, run `npm run dev`
 - Wait for this to load, it may take around 30 seconds.
 - Navigate to localhost:3000 and login.
-- Note: this is development mode, due to this, the first time you load a page of the website it must compile, which can take 5-10 seconds. The website once built, is not slow like this.
+Note: this is development mode, due to this, the first time you load a page of the website it must compile, which can take 5-10 seconds. Once built, it is not slow like this.
 
 Demo account credentials (you can also create an account):
 
